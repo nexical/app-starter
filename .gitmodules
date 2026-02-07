@@ -10,3 +10,6 @@
 [submodule "packages/reskill"]
 	path = packages/reskill
 	url = https://github.com/nexical/reskiller.git
+[submodule "packages/sdk-core"]
+	path = packages/sdk-core
+	url = https://github.com/nexical/sdk-core.git
