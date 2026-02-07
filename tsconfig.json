@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "skipLibCheck": true,
+        "composite": true,
+        "paths": {
+            "@/*": [
+                "core/src/*"
+            ],
+            "@modules/*": [
+                "modules/*"
+            ],
+            "@packages/*": [
+                "packages/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
