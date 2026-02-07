@@ -1,0 +1,22 @@
+{
+    "name": "@nexical/app-starter",
+    "version": "0.1.0",
+    "private": true,
+    "workspaces": [
+        "core",
+        "modules/**/*",
+        "packages/*",
+        "apps/*"
+    ],
+    "scripts": {
+        "setup": "npx tsx packages/cli/index.ts setup",
+        "dev:ui": "npm run dev --workspace=@app-starter/frontend",
+        "dev:api": "npm run dev --workspace=@app-starter/backend",
+        "build": "npm run build --workspaces",
+        "test": "npm run test --workspaces"
+    },
+    "devDependencies": {
+        "tsx": "^4.19.0",
+        "typescript": "^5.5.0"
+    }
+}
