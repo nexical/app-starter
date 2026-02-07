@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+*.txt
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# testing
+coverage.json
+coverage/
+playwright-report/
+test-results*/
+blob-report/
+
+# synlinks and generated files
+apps/frontend/astro.config.mjs
+apps/frontend/tsconfig.json
+apps/frontend/public/
+apps/frontend/src/
+
+apps/backend/astro.config.mjs
+apps/backend/tsconfig.json
+apps/backend/public/
+apps/backend/src/
