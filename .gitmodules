@@ -25,3 +25,6 @@
 [submodule "modules/ui/user-ui"]
 	path = modules/ui/user-ui
 	url = https://github.com/nexical-modules/user-ui.git
+[submodule "packages/cli"]
+	path = packages/cli
+	url = https://github.com/nexical/cli.git
