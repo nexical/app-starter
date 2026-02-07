@@ -29,10 +29,10 @@ blob-report/
 # synlinks and generated files
 apps/frontend/astro.config.mjs
 apps/frontend/tsconfig.json
-apps/frontend/public/
-apps/frontend/src/
+apps/frontend/public
+apps/frontend/src
 
 apps/backend/astro.config.mjs
 apps/backend/tsconfig.json
-apps/backend/public/
-apps/backend/src/
+apps/backend/public
+apps/backend/src
