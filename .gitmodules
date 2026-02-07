@@ -7,3 +7,6 @@
 [submodule "packages/agent"]
 	path = packages/agent
 	url = https://github.com/nexical/agent.git
+[submodule "packages/reskill"]
+	path = packages/reskill
+	url = https://github.com/nexical/reskiller.git
