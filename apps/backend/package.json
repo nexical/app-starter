@@ -9,7 +9,7 @@
         "clean": "rm -rf dist .astro node_modules/.vite"
     },
     "dependencies": {
-        "astro": "^5.17.1",
-        "@nexical/agent": "*"
+        "@nexical/agent": "*",
+        "astro": "^5.17.1"
     }
 }
