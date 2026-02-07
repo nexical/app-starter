@@ -4,14 +4,13 @@
     "private": true,
     "workspaces": [
         "core",
-        "modules/**/*",
         "packages/*",
-        "apps/*"
+        "apps/**/*"
     ],
     "scripts": {
         "setup": "npx tsx packages/cli/index.ts setup",
-        "dev:ui": "npm run dev --workspace=@app-starter/frontend",
-        "dev:api": "npm run dev --workspace=@app-starter/backend",
+        "dev:ui": "npm run dev --workspace=@app/frontend",
+        "dev:api": "npm run dev --workspace=@app/backend",
         "build": "npm run build --workspaces",
         "test": "npm run test --workspaces"
     },
