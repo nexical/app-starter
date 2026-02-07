@@ -1,3 +1,6 @@
 [submodule "core"]
 	path = core
 	url = https://github.com/nexical/app-core.git
+[submodule "packages/generator"]
+	path = packages/generator
+	url = https://github.com/nexical/generator.git
