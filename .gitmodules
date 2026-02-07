@@ -14,16 +14,16 @@
 	path = packages/sdk-core
 	url = https://github.com/nexical/sdk-core.git
 [submodule "modules/api/user-api"]
-	path = modules/api/user-api
+	path = apps/backend/modules/user-api
 	url = https://github.com/nexical-modules/user-api.git
 [submodule "modules/api/user-email"]
-	path = modules/api/user-email
+	path = apps/backend/modules/user-email
 	url = https://github.com/nexical-modules/user-email.git
 [submodule "modules/api/orchestrator-api"]
-	path = modules/api/orchestrator-api
+	path = apps/backend/modules/orchestrator-api
 	url = https://github.com/nexical-modules/orchestrator-api.git
 [submodule "modules/ui/user-ui"]
-	path = modules/ui/user-ui
+	path = apps/frontend/modules/user-ui
 	url = https://github.com/nexical-modules/user-ui.git
 [submodule "packages/cli"]
 	path = packages/cli
