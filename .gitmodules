@@ -4,3 +4,6 @@
 [submodule "packages/generator"]
 	path = packages/generator
 	url = https://github.com/nexical/generator.git
+[submodule "packages/agent"]
+	path = packages/agent
+	url = https://github.com/nexical/agent.git
