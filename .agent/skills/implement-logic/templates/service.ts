@@ -1,5 +1,6 @@
 import { db } from '@/lib/core/db';
 import { Logger } from '@/lib/core/logger';
+import { config } from '@/lib/core/config';
 import { HookSystem } from '@/lib/modules/hooks';
 import type { ServiceResponse } from '@/types/service';
 import type { ApiActor } from '@/lib/api/api-docs';
@@ -13,15 +14,13 @@ import type { ApiActor } from '@/lib/api/api-docs';
  * Rules:
  * 1. Static Class (No instantiation).
  * 2. ALL public domain methods MUST return a ServiceResponse<T> object.
- * 3. ONLY layer allowed to import 'db' from '@/lib/core/db'.
- * 4. Domain methods MUST accept an 'actor?: ApiActor' parameter for scoping/security.
- * 5. Implement the "Hook-First" logic flow: Filter -> Execute -> Dispatch -> Filter.
+ * 3. Domain methods SHOULD accept an 'actor?: ApiActor' parameter.
+ * 4. Implement the "Hook-First" logic flow: Filter -> Execute -> Dispatch -> Filter.
+ * 5. Use 'config' helper for environment settings.
  */
 export class __Entity__OpsService {
   /**
    * Example Domain Operation
-   * @param id The entity ID
-   * @param actor The authenticated user/agent context (MANDATORY for security/scoping)
    */
   public static async processOperation(
     id: string,
@@ -29,7 +28,6 @@ export class __Entity__OpsService {
   ): Promise<ServiceResponse<any>> {
     try {
       // 1. Hook: Filter (Pre-execution validation/modification)
-      // Allows other modules to modify input or block the action.
       const { id: filteredId } = await HookSystem.filter(
         '__entity__.beforeProcess',
         { id },
@@ -42,17 +40,18 @@ export class __Entity__OpsService {
 
         if (!record) throw new Error('not_found');
 
-        // Custom business logic here...
+        // Logic using config
+        if (config.DEBUG_MODE) {
+            Logger.info('Processing entity', { id: filteredId });
+        }
 
         return record;
       });
 
       // 3. Hook: Dispatch (Post-execution Side Effects)
-      // Asynchronous events for logging, notifications, or triggering other modules.
       await HookSystem.dispatch('__entity__.processed', { id: filteredId, actorId: actor?.id });
 
       // 4. Hook: Filter (Read/Decorate result for output)
-      // Allows other modules to strip fields or add metadata based on the actor.
       const finalData = await HookSystem.filter('__entity__.read', result, { actor });
 
       return { success: true, data: finalData };

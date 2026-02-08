@@ -1,30 +1,35 @@
+'use client';
+
 import React from 'react';
 import { useNavData } from '@/lib/ui/nav-context';
 import { useShellStore } from '@/lib/ui/shell-store';
 import { api, type ApiError } from '@/lib/api/api';
+import { Permission } from '@modules/user-api/src/permissions';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Standard Registry Component Template
  *
- * Usage:
- * Place this file in `modules/{name}/src/registry/{zone}/`.
- * Name it `{order}-{name}.tsx` (e.g., `20-my-widget.tsx`).
+ * Rules:
+ * - MUST use 'use client' directive.
+ * - MUST check permissions before rendering sensitive actions.
+ * - MUST use t() for all strings.
+ * - MUST use data-testid for all interactive elements.
  */
 export default function RegistryComponent() {
-  // 1. Access Global Context (User, Team, Active Module)
-  // Data is injected by middleware -> NavContext
+  const { t } = useTranslation();
   const { context } = useNavData();
-
-  // 2. Control the Shell
-  // Use this to open panels, toggle mobile menu, etc.
   const { setDetailPanel, closeMobileMenu } = useShellStore();
 
-  const handleClick = async () => {
-    try {
-      // 3. API Interaction
-      // Use the generated SDK client
-      await api.user.updateProfile({ active: true });
+  // 1. Permission Check
+  // Always verify if the user has the required rights
+  const canUpdateProfile = Permission.check('user:profile:write', context.user?.role);
 
+  const handleClick = async () => {
+    if (!canUpdateProfile) return;
+
+    try {
+      await api.user.updateProfile({ active: true });
       setDetailPanel('my-module-detail');
       closeMobileMenu();
     } catch (error) {
@@ -33,16 +38,17 @@ export default function RegistryComponent() {
     }
   };
 
-  // 4. Render
-  // Use semantic surface classes for styling
   return (
     <div className="p-2" data-testid="registry-component-wrapper">
       <button
         onClick={handleClick}
-        className="btn-secondary w-full flex items-center justify-center"
+        disabled={!canUpdateProfile}
+        className="btn-secondary w-full flex items-center justify-center disabled:opacity-50"
         data-testid="registry-action-btn"
       >
-        <span className="text-sm font-medium">{context.user?.name || 'Guest'}</span>
+        <span className="text-sm font-medium">
+          {context.user?.name || t('common.guest')}
+        </span>
       </button>
     </div>
   );

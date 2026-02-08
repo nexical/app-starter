@@ -13,21 +13,16 @@ You **MUST** follow the standards defined in:
 - `core/ARCHITECTURE.md`: Shell & Registry Architecture.
 - `core/MODULES.md`: Shell Registry, Head Registry, Federated SDK.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
+- **Permissions**: Always use `Permission.check()` from the corresponding API module to verify access before rendering sensitive UI components or performing actions.
+- **Internationalization**: NEVER hardcode user-facing strings. Use the `useTranslation` hook and module-prefixed keys.
+- **Mandatory Configuration**: Every UI module MUST have a `ui.yaml` file in its root directory defining its routing, shells, and registry metadata.
 
-## 1. Security (MANDATORY)
+## 1. Core Hooks
 
-Every Astro page must be protected.
+Accessing global state and controlling the shell environment is done through these hooks:
 
-- **Rule**: Every `.astro` file in `src/pages` MUST import `PageGuard` and call `protect()` before any other logic.
-- **Template**: `templates/page.astro`
-
-```typescript
-import { PageGuard } from '@/lib/ui/page-guard';
-
-// MUST be the first await in the frontmatter
-const guard = await PageGuard.protect(Astro, 'anonymous');
-if (guard) return guard;
-```
+- **useNavData()**: Accesses global application state (user info, active team, context) hydrated by middleware. Use this to avoid prop-drilling.
+- **useShellStore()**: Manages cross-cutting UI actions like opening detail panels, sidebars, or toggling mobile menus.
 
 ## 2. Component Types & Exports
 
@@ -35,9 +30,10 @@ if (guard) return guard;
 
 Small UI fragments that plug into the core shell zones.
 
+- **Directive**: MUST start with `'use client';` as they are interactive React components.
 - **Path**: `apps/frontend/modules/{name}/src/registry/{zone}/{order}-{kebab-name}.tsx`
 - **Export**: **DEFAULT Export** only.
-- **Naming**: Must start with a number for ordering (e.g., `20-user-menu.tsx`).
+- **Naming**: Must follow the pattern `{order}-{kebab-name}.tsx` (e.g., `20-user-menu.tsx`).
 - **Template**: `templates/registry-component.tsx`
 
 ### Feature Components (`src/components/{feature}/**`)
@@ -54,79 +50,60 @@ UI components organized by sub-feature (auth, admin, settings) within the module
   - **Configuration**: Controlled by `tables` in `ui.yaml`.
 - **Form**: `{Model}Form.tsx` (React Hook Form + Zod).
   - **Configuration**: Controlled by `forms` in `ui.yaml`.
-- **Rule**: Do not modify generated components directly.
+- **Rule**: Do not modify generated components directly. Use the Injection Pattern.
 
-## 3. Hybrid Development (Manual + Generated)
+## 3. Module Lifecycle & Configuration
 
-The generator enforces strict ownership of specific files via the `// GENERATED CODE` header.
+Every module requires specific files to integrate with the ecosystem:
 
-### The Injection Pattern (Composition)
+- **ui.yaml**: Mandatory manifest for routing and registry configuration.
+- **module.config.mjs**: Defines module metadata and build-time configuration.
+- **middleware.ts**: Handles request-time logic, data hydration (NavData), and protection.
+- **server-init.ts**: Server-side initialization logic.
+- **src/init.ts**: Isomorphic initialization for registering shells and assets.
 
-Instead of modifying generated forms, build standalone components and inject them via `ui.yaml`.
+## 4. Security & Page Protection
 
-1. **Create Manual Component**: `src/components/ui/custom-avatar.tsx`
-2. **Inject in `ui.yaml`**:
-   ```yaml
-   forms:
-     User:
-       avatarUrl:
-         component:
-           name: CustomAvatar
-           path: '@/components/ui/custom-avatar'
-   ```
+Every Astro page must be protected.
 
-### The Ejection Pattern (Takeover)
+- **Rule**: Every `.astro` file in `src/pages` MUST import `PageGuard` and call `protect()` before any other logic.
+- **Template**: `templates/page.astro`
 
-If a generated component restricts you too much:
+```typescript
+import { PageGuard } from '@/lib/ui/page-guard';
 
-1. **Remove** the `// GENERATED CODE` header from the top of the file.
-2. The Reconciler will now treat this file as **Manual Code**.
-3. It will no longer receive updates from the generator. You own it completely.
+// MUST be the first await in the frontmatter
+const guard = await PageGuard.protect(Astro, 'anonymous');
+if (guard) return guard;
+```
 
-## 4. Forms & Validation
+## 5. Forms & Validation
 
 Forms must use `react-hook-form` combined with `zod` for validation.
 
+- **Rule**: Component MUST start with `'use client';`.
 - **Pattern**:
-  1.  Define Zod schema wrapped in a function `(t) => z.object(...)` using **prefixed** i18n keys (e.g., `user.validation.error`).
+  1.  Define Zod schema wrapped in a function `(t) => z.object(...)` using **prefixed** i18n keys.
   2.  Use `zodResolver`.
-  3.  Use custom UI components (e.g., `Input`, `PasswordInput`) from the project's UI library.
-  4.  Catch errors using the `ApiError` type and cast to extract structured server messages.
+  3.  Use custom UI components (e.g., `Input`, `Button`) from `@/components/ui/`.
+  4.  Catch errors using the `ApiError` type to extract structured messages.
 - **Template**: `templates/form-component.tsx`
 
-## 5. Initialization (`src/init.ts`)
+## 6. Testing Protocols (Mandatory)
 
-Each module requires an isomorphic entry point to register its shells and assets.
+### Testability (data-testid)
 
-- **Rule**: Use the `async function init{ModuleName}Module()` naming convention.
-- **Rule**: Include an immediate self-execution call at the bottom of the file for registration discovery.
-- **Template**: `templates/init.ts`
+- **Rule**: All interactive elements (buttons, inputs, links, wrappers) MUST have a `data-testid` attribute.
+- **Rule**: Use stable, descriptive IDs (e.g., `user-menu-trigger`).
 
-```typescript
-export async function initUserModule() {
-  ShellRegistry.register('user', UserShell, (ctx) => ctx.url.pathname.startsWith('/user'));
-}
-initUserModule();
-```
-
-## 6. Testing Protocols
-
-### End-to-End (E2E) - Page Object Model
-
-Tests must use the Page Object Model (POM) to abstract interactions and ensure maintainability.
+### E2E - Page Object Model
 
 - **Rule**: Extend `BasePage`.
 - **Rule**: Use `this.safeGoto()` for navigation.
-- **Rule**: Call `this.byTestId()` directly within action/verification methods (do not store as private members).
-- **Rule**: Implement `visit()` and `verifyLoaded()` methods.
+- **Rule**: Call `this.byTestId()` directly within methods.
 - **Template**: `templates/e2e-page.ts`
-
-### Selectors
-
-- **Rule**: All interactive elements (buttons, inputs, links) MUST have a `data-testid` attribute.
-- **Do Not**: Rely on CSS classes or text content for selection.
 
 ## 7. Styling (`styles.css`)
 
-- **Semantic**: Use classes like `.surface-panel`, `.btn-primary`.
-- **Layered**: Wrap in `@layer components`.
+- **Rule**: Wrap all module styles in `@layer components`.
+- **Rule**: Use semantic variables and surface utilities (e.g., `@apply surface-panel`).
