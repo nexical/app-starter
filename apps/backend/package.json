@@ -3,10 +3,20 @@
     "version": "0.1.0",
     "type": "module",
     "scripts": {
-        "dev": "astro dev",
-        "build": "astro build",
-        "preview": "astro preview",
-        "clean": "rm -rf dist .astro node_modules/.vite"
+        "dev": "npm run setup && npm run db:up && astro dev",
+        "build": "npm run setup && astro build",
+        "preview": "npm run db:up && astro preview",
+        "db:up": "npm run db:up --workspace=app-core",
+        "db:down": "npm run db:down --workspace=app-core",
+        "db:push": "npm run db:push --workspace=app-core",
+        "db:generate": "npm run db:generate --workspace=app-core",
+        "db:migrate": "npm run db:migrate --workspace=app-core",
+        "db:seed": "npm run db:seed --workspace=app-core",
+        "db:studio": "npm run db:studio --workspace=app-core",
+        "setup": "npm run setup --workspace=app-core"
+    },
+    "devDependencies": {
+        "app-core": "*"
     },
     "dependencies": {
         "@nexical/agent": "*",
