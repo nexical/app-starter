@@ -9,9 +9,9 @@ description: Strict governance of the models.yaml (Distributed Schema) and api.y
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Separation of concerns and the "Shell-Registry" pattern.
-- `CODE.md`: Coding style, hygiene, and naming conventions.
-- `MODULES.md`: Module structure and the authority of the Generator.
+- `core/ARCHITECTURE.md`: Separation of concerns and the "Shell-Registry" pattern.
+- `core/CODE.md`: Coding style, hygiene, and naming conventions.
+- `core/MODULES.md`: Module structure and the authority of the Generator.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 This skill governs the **Data Modeling** and **Contract Definition** phase. The project uses a **Distributed Schema** architecture, where models are defined in YAML and compiled into Prisma, Zod schemas, and TypeScript interfaces.
@@ -25,10 +25,10 @@ This skill governs the **Data Modeling** and **Contract Definition** phase. The 
 
 ## 2. Source of Truth
 
-- **Core Models**: `prisma/models.yaml` (Base User/Auth models).
-- **Module Models**: `modules/<module-name>/models.yaml` (Feature-specific models).
-- **API Contracts**: `modules/<module-name>/api.yaml` (The Source of Truth for **Custom Actions** and endpoints).
-- **CRUD Contracts**: `modules/<module-name>/models.yaml` (The Source of Truth for **Standard CRUD** endpoints via the `role` configuration).
+- **Core Models**: `core/prisma/models.yaml` (Base User/Auth models).
+- **Module Models**: `apps/backend/modules/<module-name>/models.yaml` (Feature-specific models).
+- **API Contracts**: `apps/backend/modules/<module-name>/api.yaml` (The Source of Truth for **Custom Actions** and endpoints).
+- **CRUD Contracts**: `apps/backend/modules/<module-name>/models.yaml` (The Source of Truth for **Standard CRUD** endpoints via the `role` configuration).
 
 ## 3. Syntax Reference (`models.yaml`)
 
@@ -105,7 +105,7 @@ Manual Action classes MUST implement:
 - **Imports**: `import type { APIContext } from 'astro';` (Astro context) or `import type { APIContext } from ' @/types/api';` if a local wrapper exists.
 
 ```yaml
-# modules/my-module/api.yaml
+# apps/backend/modules/my-module/api.yaml
 Referral:
   - path: /validate
     verb: POST

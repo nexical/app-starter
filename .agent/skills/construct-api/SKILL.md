@@ -9,9 +9,9 @@ description: Expert guide for building API Modules, defining Endpoints, and foll
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Separation of concerns (Shell vs Registry).
-- `CODE.md`: Strict Zod validation, no `any`.
-- `MODULES.md`: Modular API definition, Service Layer, Hooks.
+- `core/ARCHITECTURE.md`: Separation of concerns (Shell vs Registry).
+- `core/CODE.md`: Strict Zod validation, no `any`.
+- `core/MODULES.md`: Modular API definition, Service Layer, Hooks.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ## 0. Anti-Patterns & Strict Rules

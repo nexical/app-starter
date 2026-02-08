@@ -10,10 +10,10 @@ description: Expert strategy for Testing. Defines the strict "White Box Setup / 
 You **MUST** follow the standards defined in:
 
 - `GEMINI.md`: Testing protocols.
-- `ARCHITECTURE.md`: Module Internals & Service Layer.
+- `core/ARCHITECTURE.md`: Module Internals & Service Layer.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
-- `tests/integration/README.md`: Integration guide.
-- `tests/e2e/README.md`: E2E guide.
+- `core/tests/integration/README.md`: Integration guide.
+- `core/tests/e2e/README.md`: E2E guide.
 
 ## 0. General Rules
 
@@ -26,8 +26,8 @@ You **MUST** follow the standards defined in:
 - **Goal**: Verify the Service Layer + API Contract + DB interactions + Hook Side Effects + Security.
 - **Tool**: Vitest + `ApiClient`.
 - **Scope**:
-  - Module-specific: `modules/<name>/tests/integration/**/*.test.ts`
-  - System-wide: `tests/integration/**/*.test.ts`
+  - Module-specific: `apps/backend/modules/<name>/tests/integration/**/*.test.ts`
+  - System-wide: `core/tests/integration/**/*.test.ts`
 
 ### Protocol
 
@@ -48,8 +48,8 @@ Refer to `templates/integration-test.ts`.
 - **Goal**: Verify the User Flow + Browser interactions.
 - **Tool**: Playwright.
 - **Scope**:
-  - Module-specific: `modules/<name>/tests/e2e/**/*.spec.ts`
-  - System-wide: `tests/e2e/**/*.spec.ts`
+  - Module-specific: `apps/frontend/modules/<name>/tests/e2e/**/*.spec.ts`
+  - System-wide: `core/tests/e2e/**/*.spec.ts`
 
 ### Protocol
 
@@ -65,7 +65,7 @@ Refer to `templates/e2e-test.ts`.
 
 - **Goal**: Verify complex algorithms, Service logic, Action orchestration, and Regex.
 - **Tool**: Vitest.
-- **Scope**: `modules/<name>/tests/unit/**/*.test.ts`
+- **Scope**: `apps/backend/modules/<name>/tests/unit/**/*.test.ts`
 - **Mocking**: Allowed and encouraged for Unit Tests (mock DB/db, other Services, HookSystem). **FORBIDDEN** for Integration/E2E.
 
 ### Protocol
@@ -83,7 +83,7 @@ Refer to `templates/service-unit-test.ts`.
 
 - **Goal**: Verify background `JobProcessor` logic.
 - **Tool**: Vitest.
-- **Scope**: `modules/<name>/tests/unit/processors/**/*.test.ts`
+- **Scope**: `apps/backend/modules/<name>/tests/unit/processors/**/*.test.ts`
 
 ### Protocol
 

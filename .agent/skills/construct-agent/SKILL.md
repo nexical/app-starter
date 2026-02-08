@@ -9,13 +9,13 @@ description: Expert guide for building Autonomous Agentic Modules using JobProce
 
 You **MUST** follow the standards defined in:
 
-- `MODULES.md`: Section 19 (Agentic Modules).
-- `CODE.md`: Strict Types (Aliased imports must use `@/` or `@modules/`).
+- `core/MODULES.md`: Section 19 (Agentic Modules).
+- `core/CODE.md`: Strict Types (Aliased imports must use `@/` or `@modules/`).
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ## 1. Directory Structure
 
-Agent files are auto-discovered if placed in `modules/{name}/src/agent/`.
+Agent files are auto-discovered if placed in `apps/backend/modules/{name}/src/agent/`.
 
 - **Location**: `src/agent/*.ts`
 

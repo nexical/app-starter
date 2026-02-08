@@ -9,9 +9,9 @@ description: Maintains the "Constitution." It updates the global PROJECT_MAP.md 
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Separation of concerns.
-- `CODE.md`: Coding style and hygiene.
-- `MODULES.md`: Module structure.
+- `core/ARCHITECTURE.md`: Separation of concerns.
+- `core/CODE.md`: Coding style and hygiene.
+- `core/MODULES.md`: Module structure.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 This skill is the **Cartographer**. Its job is to keep `PROJECT_MAP.md` up to date, ensuring the AI has an accurate map of the system's "User Space" (Modules) and "Kernel" (Shell).
@@ -22,7 +22,7 @@ Ensure the AI doesn't hallucinate about the system state by maintaining a canoni
 
 ## 2. Actions
 
-- **Scan**: Read `modules/` recursively to identify active modules.
+- **Scan**: Read `apps/backend/modules/` and `apps/frontend/modules/` recursively to identify active modules.
   - **Identify Patterns**: For each module, catalog the Canon components.
     - **CRITICAL (Mixed Directory Policy)**: Skip any file containing the `// GENERATED CODE` header to focus on manual implementation.
     - **Services**: `src/services/*.ts`. **Validation**: Verify public methods return `Promise<ServiceResponse<T>>`. Flag deviations as "Architecture Drift."
@@ -34,7 +34,7 @@ Ensure the AI doesn't hallucinate about the system state by maintaining a canoni
 - **Update**: Regenerate `PROJECT_MAP.md` using the template at `.agent/skills/map-system/templates/PROJECT_MAP.md`.
   - **Metadata**: Extract description from `package.json` (fallback to "No description provided").
   - **Structure**: Group by Module -> Component Type.
-- **Registry Verification**: Check `src/registry/` to ensure modules are correctly registered for UI injection.
+- **Registry Verification**: Check `apps/frontend/modules/{name}/src/registry/` to ensure modules are correctly registered for UI injection.
 
 ## 3. When to use
 

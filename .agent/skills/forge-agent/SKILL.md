@@ -9,9 +9,9 @@ description: Specific knowledge of the JobProcessor and PersistentAgent classes.
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Separation of concerns and 3-tier architecture.
-- `CODE.md`: Coding style, hygiene, and **[Uniform Service Response](./CODE.md#uniform-service-response)**.
-- `MODULES.md`: Module structure, Hook system, and Agent authority.
+- `core/ARCHITECTURE.md`: Separation of concerns and 3-tier architecture.
+- `core/CODE.md`: Coding style, hygiene, and **[Uniform Service Response](./core/CODE.md#uniform-service-response)**.
+- `core/MODULES.md`: Module structure, Hook system, and Agent authority.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 This skill governs the creation of **AI Agents** and **Background Workers**.
@@ -23,7 +23,7 @@ This skill governs the creation of **AI Agents** and **Background Workers**.
 
 ## 2. Directory Structure & Naming
 
-- **Path**: `modules/<module-name>/src/agent/`
+- **Path**: `apps/backend/modules/<module-name>/src/agent/`
 - **Naming Convention**: `kebab-case.ts`. (e.g., `sync-project.ts`, `watcher.ts`).
 
 ## 3. Creating a Job Processor

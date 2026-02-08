@@ -9,9 +9,9 @@ description: Deconstructs a vague user request (e.g., "I want a referral system"
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Separation of concerns (Shell vs Registry).
-- `CODE.md`: Coding style, naming conventions, and strictly typed hygiene.
-- `MODULES.md`: Module structure, `models.yaml` (not schema.prisma), and `HookSystem`.
+- `core/ARCHITECTURE.md`: Separation of concerns (Shell vs Registry).
+- `core/CODE.md`: Coding style, naming conventions, and strictly typed hygiene.
+- `core/MODULES.md`: Module structure, `models.yaml` (not schema.prisma), and `HookSystem`.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 This skill allows the agent to act as a **Software Architect**. Its purpose is to turn vague requirements into a structured technical specification that aligns with the **Modular Monolith** architecture.

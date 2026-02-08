@@ -9,8 +9,8 @@ description: Expert usage of the 'arc' CLI (or manual fallback) to generate corr
 
 You **MUST** follow the standards defined in:
 
-- `MODULES.md`: Module types (API vs UI vs Email), Naming conventions, Phase loading.
-- `ARCHITECTURE.md`: Core Neutrality.
+- `core/MODULES.md`: Module types (API vs UI vs Email), Naming conventions, Phase loading.
+- `core/ARCHITECTURE.md`: Core Neutrality.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ## 1. The Module Types (Strict Separation)
@@ -22,7 +22,7 @@ We strictly separate concerns into distinct packages. Standard CRUD logic is man
 - **Purpose**: Backend logic, Database, Services, Security.
 - **Structure**:
   ```text
-  modules/my-feature-api/
+  apps/backend/modules/my-feature-api/
   ├── package.json          # @modules/my-feature-api
   ├── models.yaml           # Data Schema (Additive)
   ├── api.yaml              # REST API Definition (OpenAPI)
@@ -45,7 +45,7 @@ We strictly separate concerns into distinct packages. Standard CRUD logic is man
 - **Purpose**: Frontend components, Registry items, Pages.
 - **Structure**:
   ```text
-  modules/my-feature-ui/
+  apps/frontend/modules/my-feature-ui/
   ├── package.json          # @modules/my-feature-ui
   │   ├── styles.css            # Tailwind Layers (@layer components)
   │   ├── ui.yaml               # UI Generator Configuration (Feature, Forms, Tables)
@@ -87,7 +87,7 @@ nexical gen api <name>
 ### Registry Convention (`src/registry/`)
 
 - **Naming**: Files MUST follow `{order}-{kebab-name}.tsx` (e.g., `10-dashboard-widget.tsx`).
-- **Zones**: Components are "pinned" to Shell Zones defined in `ARCHITECTURE.md`.
+- **Zones**: Components are "pinned" to Shell Zones defined in `core/ARCHITECTURE.md`.
 
 ### UI Configuration (`ui.yaml`)
 

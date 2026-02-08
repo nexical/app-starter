@@ -9,9 +9,9 @@ description: Expert guide for building UI Modules, Surface Interfaces, and Regis
 
 You **MUST** follow the standards defined in:
 
-- `THEME.md`: Semantic CSS and Surface Design.
-- `ARCHITECTURE.md`: Shell & Registry Architecture.
-- `MODULES.md`: Shell Registry, Head Registry, Federated SDK.
+- `core/THEME.md`: Semantic CSS and Surface Design.
+- `core/ARCHITECTURE.md`: Shell & Registry Architecture.
+- `core/MODULES.md`: Shell Registry, Head Registry, Federated SDK.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ## 1. Security (MANDATORY)
@@ -35,7 +35,7 @@ if (guard) return guard;
 
 Small UI fragments that plug into the core shell zones.
 
-- **Path**: `modules/{name}/src/registry/{zone}/{order}-{kebab-name}.tsx`
+- **Path**: `apps/frontend/modules/{name}/src/registry/{zone}/{order}-{kebab-name}.tsx`
 - **Export**: **DEFAULT Export** only.
 - **Naming**: Must start with a number for ordering (e.g., `20-user-menu.tsx`).
 - **Template**: `templates/registry-component.tsx`

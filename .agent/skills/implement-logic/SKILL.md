@@ -9,9 +9,9 @@ description: Expert knowledge of the Service Layer, Business Logic, and Hook Sys
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Shell-Registry, Service Layer, Agents.
-- `MODULES.md`: Modular Monolith, Hooks, API/SDK Flow.
-- `CODE.md`: Strict Types, Zod Validation, Error Handling.
+- `core/ARCHITECTURE.md`: Shell-Registry, Service Layer, Agents.
+- `core/MODULES.md`: Modular Monolith, Hooks, API/SDK Flow.
+- `core/CODE.md`: Strict Types, Zod Validation, Error Handling.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ## 1. The Service Pattern
@@ -76,7 +76,7 @@ For long-running workers that run on an interval.
 
 Side effects and data modifications are implemented by creating listener files in `src/hooks/`.
 
-- **Location**: `modules/{name}/src/hooks/{kebab-case}-hooks.ts`.
+- **Location**: `apps/backend/modules/{name}/src/hooks/{kebab-case}-hooks.ts`.
 - **Structure**: Class with a `static init()` method.
 - **Discovery**: The module's generated `server-init.ts` automatically discovers and calls `init()` for all files in `src/hooks/`. **Manual registration in server-init.ts is FORBIDDEN.**
 - **Rules**: Use `HookSystem.on` for side effects and `HookSystem.filter` for data modification. NEVER import `db` in a hook.

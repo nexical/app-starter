@@ -9,30 +9,28 @@ description: Expert usage of the Database Compiler. Handles the additive Schema 
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: 3-Tier Modular Monolith Architecture.
-- `MODULES.md`: Additive Schema Design & Mixed Directories.
-- `CODE.md`: Service Layer Patterns.
+- `core/ARCHITECTURE.md`: 3-Tier Modular Monolith Architecture.
+- `core/MODULES.md`: Additive Schema Design & Mixed Directories.
+- `core/CODE.md`: Service Layer Patterns.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ### 🔴 STRICT PROHIBITIONS
 
-1.  **NO Direct DB Access in API/Actions**: You must **NEVER** import or use `prisma` or `db` directly inside `modules/{name}/src/pages/api/` or `modules/{name}/src/actions/`.
+1.  **NO Direct DB Access in API/Actions**: You must **NEVER** import or use `prisma` or `db` directly inside `apps/backend/modules/{name}/src/pages/api/` or `apps/backend/modules/{name}/src/actions/`.
 2.  **NO Direct DB Access in Agents**: JobProcessors and PersistentAgents **MUST NOT** import `db`. They must use Services or the Federated SDK.
-3.  **NO Direct DB Access in Middleware/Core**: Even core files (e.g., `src/middleware.ts`) should delegate data operations to Services. If you find `db` imports outside of `modules/{name}/src/services/`, they are architectural debt. **NEVER** add `import { db }` to middleware.
-4.  **Service Layer Mandatory**: All database logic must be encapsulated in a static `Service` class located in `modules/{name}/src/services/`.
+3.  **NO Direct DB Access in Middleware/Core**: Even core files (e.g., `src/middleware.ts`) should delegate data operations to Services. If you find `db` imports outside of `apps/backend/modules/{name}/src/services/`, they are architectural debt. **NEVER** add `import { db }` to middleware.
+4.  **Service Layer Mandatory**: All database logic must be encapsulated in a static `Service` class located in `apps/backend/modules/{name}/src/services/`.
 5.  **Transactions Required**: All mutations (create, update, delete) must be wrapped in `db.$transaction`.
 6.  **Static Only**: All Service and Action methods must be `static`.
 
 ## 1. The Schema Ontology (`models.yaml`)
 
-We DO NOT edit `schema.prisma` directly.
-
-- **Source of Truth**: `modules/{name}/models.yaml`.
-- **Compilation**: The compiler merges these fragments into `prisma/schema.prisma`.
+We DO NOT- **Core Models**: `core/prisma/models.yaml` (Base User/Auth models).
+- **Module Models**: `apps/backend/modules/{name}/models.yaml` (Feature-specific models).ation**: The compiler merges these fragments into `prisma/schema.prisma`.
 
 ### Workflow
 
-1.  **Edit**: Modify `modules/{name}/models.yaml`.
+1.  **Edit**: Modify `apps/backend/modules/{name}/models.yaml`.
 2.  **Generate**: Run `nexical` or `npx tsx scripts/generate-prisma.ts`.
 3.  **Push/Migrate**:
     - **Dev**: `npm run db:push`
@@ -46,7 +44,7 @@ Access to data follows a strict hierarchy: `Action -> Service -> DB`.
 
 Actions handle validation and orchestrate business logic across multiple services.
 
-- **Location**: `modules/{name}/src/actions/{kebab-case}.ts` (Manual)
+- **Location**: `apps/backend/modules/{name}/src/actions/{kebab-case}.ts` (Manual)
 - **Naming Convention**: Always use `{kebab-case}.ts`. Do not add group suffixes like `-ops.ts`.
 - **Signature**: MUST implement `public static async run(input: unknown, context: APIContext)`.
 - **Validation**: Manual Actions **MUST** define a `static schema` (Zod) and perform `this.schema.parse(input)` inside `.run()`. This is non-negotiable for security and decoupling.
@@ -58,7 +56,7 @@ Actions handle validation and orchestrate business logic across multiple service
 
 Services are the **ONLY** tier allowed to import `db` from `@/lib/core/db`.
 
-- **Mixed Directory**: `modules/{name}/src/services/` contains both machine-generated and manual code.
+- **Mixed Directory**: `apps/backend/modules/{name}/src/services/` contains both machine-generated and manual code.
   - **CRITICAL**: Check for `// GENERATED CODE` headers. Do **NOT** modify these files.
   - **Custom Logic**: Create manual files with `{kebab-case}-ops-service.ts` suffixes.
 - **Requirement**: Must be stateless classes with static methods.
@@ -84,11 +82,11 @@ Data mutations must trigger lifecycle events via the `HookSystem`.
 2.  **Execute Logic**: Perform the DB operation (usually inside a transaction).
 3.  **Dispatch Event**: Use `HookSystem.dispatch('model.created', ...)` after successful mutations.
 4.  **Filter Output**: Use `HookSystem.filter('model.afterCreate', ...)` to sanitize or transform data before returning to the caller.
-5.  **Registration**: All hooks MUST be registered in the module's `modules/{name}/src/server-init.ts` file via the `static init()` method (handled by the generator).
+5.  **Registration**: All hooks MUST be registered in the module's `apps/backend/modules/{name}/src/server-init.ts` file via the `static init()` method (handled by the generator).
 
 ## 5. Agentic Interaction
 
-Agents (JobProcessors) in `modules/{name}/src/agent/` must follow strict isolation.
+Agents (JobProcessors) in `apps/backend/modules/{name}/src/agent/` must follow strict isolation.
 
 - **Base Class**: Extend `JobProcessor<T>` from `@nexical/agent`.
 - **Configuration**: MUST define a `public static jobType: string`. It is NOT an instance property.
@@ -101,8 +99,8 @@ Agents (JobProcessors) in `modules/{name}/src/agent/` must follow strict isolati
 
 Before finalizing any DB-related change, perform these checks:
 
-1.  **Grep for DB Imports**: Run `grep -r "import { db } from '@/lib/core/db'"` and ensure it ONLY matches files in `modules/*/src/services/`.
-2.  **Check for Schema in Actions**: Ensure any manual `.ts` file in `modules/*/src/actions/` defines a `static schema` and calls `.parse()`.
+1.  **Grep for DB Imports**: Run `grep -r "import { db } from '@/lib/core/db'"` and ensure it ONLY matches files in `apps/backend/modules/*/src/services/`.
+2.  **Check for Schema in Actions**: Ensure any manual `.ts` file in `apps/backend/modules/*/src/actions/` defines a `static schema` and calls `.parse()`.
 3.  **Check for Actor in Services**: Ensure every manual service method accepts `actor: ApiActor`.
 4.  **Check for Hook Flow**: Ensure manual services implement all 4 steps: Filter Input, Execute, Dispatch, Filter Output.
 5.  **Generated Header Check**: Ensure no file containing `// GENERATED CODE` has been modified manually.

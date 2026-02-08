@@ -9,9 +9,9 @@ description: Expert knowledge of the Security Model, Role-Based Access Control (
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Security Architecture.
-- `MODULES.md`: Middleware and Guard systems.
-- `CODE.md`: Service/Action Layer orchestration rules.
+- `core/ARCHITECTURE.md`: Security Architecture.
+- `core/MODULES.md`: Middleware and Guard systems.
+- `core/CODE.md`: Service/Action Layer orchestration rules.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 ## 1. The Guard System
@@ -52,7 +52,7 @@ The system uses **Action-Service Orchestration**.
   - _Bad (in Action)_: `const project = await db.project.findUnique(...)`
   - _Good (in Service)_: `const project = await this.db.project.findFirst({ where: { id, teamId: actor.teamId } })`
 
-## 3. Role Policies (`modules/{name}/src/roles/*.ts`)
+## 3. Role Policies (`apps/backend/modules/{name}/src/roles/*.ts`)
 
 Complex authorization logic belongs in `RolePolicy` classes.
 
@@ -67,7 +67,7 @@ Complex authorization logic belongs in `RolePolicy` classes.
 - **DB Access**: Policies **MUST NOT** import `db`. They should call Service methods and handle the `ServiceResponse`.
 
 ```typescript
-// modules/project-api/src/roles/project-admin.ts
+// apps/backend/modules/project-api/src/roles/project-admin.ts
 import { RolePolicy } from '@/lib/registries/role-registry';
 import type { APIContext, AstroGlobal } from 'astro';
 import { ProjectService } from '../services/project-service';
@@ -109,7 +109,7 @@ Security is enforced via side effects (Dispatch) and data modification (Filter).
 Use `HookSystem.filter` to sanitize sensitive data. Use `unknown` and validate/cast instead of `any`.
 
 ```typescript
-// modules/user-api/src/hooks/security-filters.ts
+// apps/backend/modules/user-api/src/hooks/security-filters.ts
 import { HookSystem } from '@/lib/modules/hooks';
 
 export class SecurityFilters {
@@ -130,7 +130,7 @@ export class SecurityFilters {
 Use `HookSystem.on` for security event logging.
 
 ```typescript
-// modules/user-api/src/hooks/audit-hooks.ts
+// apps/backend/modules/user-api/src/hooks/audit-hooks.ts
 import { HookSystem } from '@/lib/modules/hooks';
 import { Logger } from '@/lib/core/logger';
 

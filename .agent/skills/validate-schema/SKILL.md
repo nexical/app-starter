@@ -9,9 +9,9 @@ description: Ensures that changes to models.yaml are valid Prisma syntax, DTO co
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: Separation of concerns and "Shell-Registry" pattern.
-- `CODE.md`: Strict typing and naming conventions.
-- `MODULES.md`: Modular API and Model extension rules.
+- `core/ARCHITECTURE.md`: Separation of concerns and "Shell-Registry" pattern.
+- `core/CODE.md`: Strict typing and naming conventions.
+- `core/MODULES.md`: Modular API and Model extension rules.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 This skill acts as the **Gatekeeper**. Its purpose is to ensure that any schema change is valid for both the Database (Prisma) and the API (SDK/DTOs).
@@ -54,7 +54,7 @@ npx tsx scripts/generate-prisma.ts && npx tsx scripts/generate-sdk.ts && npm run
 
 ### Role Errors
 
-- If a model has `role: workspace-admin` or a granular role like `create: admin`, verify that the corresponding policy files (e.g., `src/roles/admin.ts`) exist.
+- If a model has `role: workspace-admin` or a granular role like `create: admin`, verify that the corresponding policy files (e.g., `apps/backend/modules/{name}/src/roles/admin.ts`) exist.
 
 ## 4. Merge & Extension Strategy
 

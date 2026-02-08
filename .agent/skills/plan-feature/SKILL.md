@@ -9,9 +9,9 @@ description: Determines the blast radius of a change and produces a file impleme
 
 You **MUST** follow the standards defined in:
 
-- `ARCHITECTURE.md`: 3-Tier Modular Architecture (Handler -> Action -> Service).
-- `MODULES.md`: Strict separation of Generated vs. Manual code.
-- `CODE.md`: Code hygiene and typed requirements.
+- `core/ARCHITECTURE.md`: 3-Tier Modular Architecture (Handler -> Action -> Service).
+- `core/MODULES.md`: Strict separation of Generated vs. Manual code.
+- `core/CODE.md`: Code hygiene and typed requirements.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 
 This skill acts as the **Architectural Planner**. It produces a concrete "To-Do" list that respects the isolation of modules and the integrity of generated code.
@@ -24,7 +24,7 @@ To answer: "If I add this feature, exactly what files do I need to touch, what m
 
 You must assume a **Split Module** architecture.
 
-### API Module (`modules/<name>-api`)
+### API Module (`apps/backend/modules/<name>-api`)
 
 **Definition Files (Edit these first)**
 
@@ -53,7 +53,7 @@ You must assume a **Split Module** architecture.
 4.  **Hooks**: `src/hooks/{kebab-case}-hooks.ts`
     - _Rule_: Side effects and data filters. Auto-registered by `server-init.ts`.
 
-### UI Module (`modules/<name>-ui`)
+### UI Module (`apps/frontend/modules/<name>-ui`)
 
 1.  **Registry**: `src/registry/{zone}/{order}-{kebab-name}.tsx` (Shell injection).
 2.  **Pages**: `src/pages/{route}.astro` (Virtualized routes).
@@ -66,8 +66,8 @@ Produce a checklist that clearly distinguishes between Definitions, Implementati
 ```markdown
 ### 1. Definitions (YAML)
 
-- [MOD] `modules/referrals-api/models.yaml` (Add Referral model)
-- [NEW] `modules/referrals-api/api.yaml` (Define `POST /referrals/claim`)
+- [MOD] `apps/backend/modules/referrals-api/models.yaml` (Add Referral model)
+- [NEW] `apps/backend/modules/referrals-api/api.yaml` (Define `POST /referrals/claim`)
 
 ### 2. Generate Code
 
@@ -75,15 +75,15 @@ Produce a checklist that clearly distinguishes between Definitions, Implementati
 
 ### 3. Implementation (Manual)
 
-- [NEW] `modules/referrals-api/src/services/referral-service.ts` (Domain logic)
-- [NEW] `modules/referrals-api/src/actions/claim-referral-action.ts` (Orchestration)
-- [NEW] `modules/referrals-api/src/roles/referral-participant.ts` (Policy)
-- [NEW] `modules/referrals-api/src/hooks/referral-hooks.ts` (Side effects)
-- [NEW] `modules/referrals-ui/src/registry/dashboard/10-referral-banner.tsx` (UI)
+- [NEW] `apps/backend/modules/referrals-api/src/services/referral-service.ts` (Domain logic)
+- [NEW] `apps/backend/modules/referrals-api/src/actions/claim-referral-action.ts` (Orchestration)
+- [NEW] `apps/backend/modules/referrals-api/src/roles/referral-participant.ts` (Policy)
+- [NEW] `apps/backend/modules/referrals-api/src/hooks/referral-hooks.ts` (Side effects)
+- [NEW] `apps/frontend/modules/referrals-ui/src/registry/dashboard/10-referral-banner.tsx` (UI)
 
 ### 4. Verification
 
-- [NEW] `modules/referrals-api/tests/integration/referral.test.ts`
+- [NEW] `apps/backend/modules/referrals-api/tests/integration/referral.test.ts`
 ```
 
 ## 4. Strategy
