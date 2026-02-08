@@ -1,0 +1,4 @@
+{
+  "recommendations": ["astro-build.astro-vscode", "Tobermory.es6-string-html"],
+  "unwantedRecommendations": []
+}
