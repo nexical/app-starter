@@ -8,11 +8,12 @@
         "apps/**/*"
     ],
     "scripts": {
-        "setup": "npx tsx packages/cli/index.ts setup",
+        "build": "npm run build --workspaces",
         "dev:ui": "npm run dev --workspace=@app/frontend",
         "dev:api": "npm run dev --workspace=@app/backend",
-        "build": "npm run build --workspaces",
-        "build:reskill": "npm run build --workspace=@nexical/reskill",
+        "docker:db": "docker compose up db",
+        "docker:api": "docker compose up backend",
+        "docker:ui": "docker compose up frontend",
         "test": "npm run test --workspaces"
     },
     "devDependencies": {
