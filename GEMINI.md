@@ -135,9 +135,11 @@ You have access to the following specialized skills. Use them to perform complex
 - **[ensure-security](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/ensure-security/SKILL.md)**: Expert knowledge of the Security Model, Role-Based Access Control (RBAC), and Attribute-Based Access Control (ABAC).
 - **[forge-agent](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/forge-agent/SKILL.md)**: Specific knowledge of the JobProcessor and PersistentAgent classes. It understands the async queue system.
 - **[implement-logic](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/implement-logic/SKILL.md)**: Expert knowledge of the Service Layer, Business Logic, and Hook System. Enforces the Static Service pattern, Action pattern, Job Processors, and Providers.
+- **[implement-registry](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/implement-registry/SKILL.md)**: No description provided.
 - **[manage-db](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/manage-db/SKILL.md)**: Expert usage of the Database Compiler. Handles the additive Schema Ontology (models.yaml) and the Generated Prisma Client.
 - **[map-system](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/map-system/SKILL.md)**: Maintains the "Constitution." It updates the global PROJECT_MAP.md so the AI always knows the current state of the architecture.
 - **[plan-feature](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/plan-feature/SKILL.md)**: Determines the blast radius of a change and produces a file implementation checklist, respecting the API/UI module split and strict generation rules.
 - **[scaffold-module](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/scaffold-module/SKILL.md)**: Expert usage of the 'arc' CLI (or manual fallback) to generate correctly structured modules within the Nexus Ecosystem.
 - **[validate-schema](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/validate-schema/SKILL.md)**: Ensures that changes to models.yaml are valid Prisma syntax, DTO compliant, and don't break architectural contracts.
 - **[verify-quality](file:///home/adrian/Projects/nexical/app-starter/.agent/skills/verify-quality/SKILL.md)**: Expert strategy for Testing. Defines the strict "White Box Setup / Black Box Execution" protocol.
+
