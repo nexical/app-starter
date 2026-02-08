@@ -12,6 +12,7 @@
         "dev:ui": "npm run dev --workspace=@app/frontend",
         "dev:api": "npm run dev --workspace=@app/backend",
         "build": "npm run build --workspaces",
+        "build:reskill": "npm run build --workspace=@nexical/reskill",
         "test": "npm run test --workspaces"
     },
     "devDependencies": {
