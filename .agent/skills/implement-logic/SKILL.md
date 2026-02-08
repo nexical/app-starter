@@ -18,72 +18,69 @@ You **MUST** follow the standards defined in:
 
 While Services remain the primary "System of Record" for shared business logic, the Nexical Ecosystem permits **Universal Database Access**.
 
-- **Rule**: Import `db` from `@/lib/core/db` for all database operations across all backend layers (**Actions, Services, and Hooks**).
+- **Rule**: Import `db` from `@/lib/core/db` for all database operations across all backend layers (**Services and Hooks**).
+- **Restriction**: **NEVER** use `db` directly inside an Action. Actions must delegate to Services.
 - **Usage**: `import { db } from '@/lib/core/db';`
 
-## 2. The Service Pattern
+## 2. The Service Pattern (Business Logic)
 
-Services encapsulate complex domain logic, Prisma transactions, and emit hooks.
+Services encapsulate complex domain logic, Prisma transactions, and emit hooks. They are the "Engines" of the system.
 
-- **File Naming**: Manual domain services MUST use `{kebab-case}-ops-service.ts`.
+- **File Naming**: Manual domain services MUST use `{kebab-case}-service.ts`.
 - **Class**: Must be a **Static Class**. Do not instantiate services.
 - **Actor Context**: All public domain methods **MUST** accept an `actor?: ApiActor` parameter to enable security scoping and authorship tracking.
-- **Return Type**: **ALL** public methods MUST return a `ServiceResponse<T>` object.
+- **Return Type**: **ALL** public methods MUST return a `ServiceResponse<T>` object to ensure consistent error handling.
 - **Hook-First Flow**:
     1. **Filter (Pre)**: `HookSystem.filter('{entity}.before{Action}', ...)`
     2. **Execute**: Perform logic/DB operation.
     3. **Dispatch (Post)**: `HookSystem.dispatch('{entity}.{action}Performed', ...)`
     4. **Filter (Read)**: `HookSystem.filter('{entity}.read', ...)`
 
-## 3. The Action Pattern (API Operations)
+## 3. The Action Pattern (API Gateways)
 
-Actions are single-purpose operations triggered by API endpoints.
+Actions are single-purpose gateways triggered by API endpoints. They handle actor extraction and service delegation.
 
-- **Generation Protocol**: **NEVER** create Action files manually. Define the operation in `api.yaml` and run `nexical gen api {module}`. Implement custom logic within the generated class.
+- **Generation Protocol**: **NEVER** create Action files manually. Define the operation in `api.yaml` and run `nexical gen api {module}`.
 - **Location**: `src/actions/`.
-- **Logic**: Actions may contain direct DB access (Prisma) and business logic for "action" type endpoints.
-- **Authorization**: MUST check for the presence of an `actor` in `context.locals.actor`.
-- **I18n**: Subject lines and user-facing strings MUST be fetched using `getTranslation()`, never hardcoded as literals.
+- **Logic Policy**: **Gateways, not Engines**. Actions MUST NOT contain complex business logic or direct Prisma calls. They delegate to a `Service`.
+- **Authorization**: Use `ApiGuard.protect` or `RolePolicy` classes to enforce security. Manual actor checks should be minimized in favor of policy-driven enforcement.
+- **I18n**: Subject lines and user-facing strings MUST be fetched using `getTranslation()`.
 
-## 4. Hook Registration & Auto-Discovery
+## 4. Role-Based Policy Enforcement
+
+Security policies are isolated in `src/roles/` to maintain clean separation between logic and access control.
+
+- **Rule**: Access control logic MUST be encapsulated in `RolePolicy` classes.
+- **Usage**: Policies are invoked via `ApiGuard.protect` in route handlers or checked within Actions for fine-grained control.
+- **Naming**: `{role-name}.ts` (e.g., `job-owner.ts`).
+
+## 5. Hook Registration & Auto-Discovery
 
 Cross-module side-effects and data transformations are isolated in Hook classes.
 
 - **Location**: `src/hooks/*-hooks.ts`.
 - **Auto-Discovery Rule**: Every hook file **MUST** export an `init` function that calls the class's static `init` method.
-- **Registration**: Use `HookSystem.on` for side effects and `HookSystem.filter` for data transformations (e.g., password hashing).
-- **Example**:
-  ```typescript
-  export class UserHooks {
-    static init() {
-      HookSystem.filter('user.beforeCreate', async (data) => {
-        data.password = await hash(data.password);
-        return data;
-      });
-    }
-  }
-  export const init = () => UserHooks.init();
-  ```
+- **Registration**: Use `HookSystem.on` for side effects and `HookSystem.filter` for data transformations.
 
-## 5. Background Agents & Jobs
+## 6. Provider & Storage Patterns
+
+For external integrations or polymorphic logic, use the Provider pattern.
+
+- **Location**: `src/lib/core/storage/` or `src/providers/`.
+- **Structure**: Define an interface, provide concrete implementations, and use a Factory/Singleton getter.
+
+## 7. Background Agents & Jobs
 
 - **Job Processors**: Discrete tasks queued via `JobProcessor<T>`. Payloads MUST be defined in `models.yaml`.
 - **Persistent Agents**: Long-running workers extending `PersistentAgent`.
-- **Access**: Both may use direct `db` imports or `this.api` (Federated SDK).
-
-## 6. Modular Communications (Email Registry)
-
-- **Rule**: Always use `EmailRegistry.render` with a string-based template identifier for email communications.
-- **Example**: `EmailRegistry.render('user:verify-email', payload)`.
-
-## 7. Configuration & Environment
-
-- **Rule**: Use the centralized `config` helper from `@/lib/core/config` for all environment-dependent values (e.g., `config.PUBLIC_SITE_NAME`).
 
 ## 8. Templates
 
-- `templates/service.ts`: `{kebab-case}-ops-service.ts` (Manual domain logic).
-- `templates/action.ts`: Implementation logic for generated Actions.
-- `templates/hook.ts`: Hook registration class with auto-discovery export.
+- `templates/service.ts`: `{kebab-case}-service.ts` (Manual domain logic).
+- `templates/action.ts`: Gateway implementation for generated Actions.
+- `templates/role.ts`: RolePolicy class for security enforcement.
+- `templates/hook.ts`: Hook registration class.
 - `templates/job.ts`: Background job processor.
 - `templates/persistent-agent.ts`: Long-running worker.
+- `templates/provider.ts`: Generic provider factory.
+- `templates/storage-provider.ts`: Specialized storage driver.

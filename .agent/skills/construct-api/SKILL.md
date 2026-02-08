@@ -26,70 +26,83 @@ You **MUST** follow the standards defined in:
   - _Note: `{model}-service.ts` (e.g., `user-service.ts`) is reserved for GENERATED CRUD._
 - **NO DB ACCESS IN ACTIONS**: Manual Actions (`src/actions`) are the system's orchestrators.
   - **CRITICAL RULE**: Actions MUST NOT access the 'db' (Prisma) directly. They MUST delegate all database operations to Services. Importing ` @/lib/core/db` in an Action is FORBIDDEN.
-  - _Exception_: Generated Action files may contain atomic `db` operations like upserts for simple CRUD orchestration.
+- **SERVICE-TO-SERVICE PROHIBITION**: Services MUST NOT import other Services directly to avoid circular dependencies and logic leakage.
+  - **RULE**: If logic requires multiple services, it MUST be orchestrated by an **Action**.
 - **MANDATORY VALIDATION**: All manual Actions MUST define a `static schema` (Zod) and call `this.schema.parse(input)` as the first line of the `run` method.
-- **NO LOGIC IN ENDPOINTS**: Endpoints (`src/pages/api`) must **NEVER** contain business logic. They only Validate, Guard, and Call (Service/Action).
+- **NO LOGIC IN ENDPOINTS**: Endpoints (`src/pages/api`) must **NEVER** contain business logic. They only Validate, Guard, and Call (Action).
 
-## 1. The API Architecture (Generator First)
+## 1. The API Architecture (YAML-First)
 
 We use a flexible Layered Architecture driven by schemas.
 
-### 1.1 The Workflow
+### 1.1 The Source of Truth (YAML)
 
-1.  **Update `models.yaml`** to define data structures and standard CRUD roles.
-2.  **Update `api.yaml`** to define custom API operations (actions).
-3.  **Run `nexical gen api {name}`** to generate Endpoints, SDKs, and CRUD Services.
-4.  **Implement custom domain logic** in manual Service or Action files.
+1.  **`models.yaml`**: Defines data structures, relationships, and standard CRUD access.
+2.  **`api.yaml`**: Defines custom API operations (Actions), their paths, and signatures.
+3.  **`access.yaml`**: [Optional] Defines declarative Role-Based Access Control (RBAC) rules for the module.
 
-### 1.2 The Layers
+### 1.2 The Workflow
 
-1.  **Endpoint (`src/pages/api/**`)**: [Generated] The HTTP Gateway. Handles Protocol, Security (`ApiGuard`), and Input Validation.
-2.  **Action (`src/actions/**`)**: [Manual/Mixed] The Controller for complex business logic. Orchestrates multiple services.
-3.  **Service (`src/services/**`)**: [Manual/Mixed] The Domain Logic. Handles Database and Hooks. MUST use **Static Methods**.
+1.  Update the YAML definitions.
+2.  **Run `nexical gen api {name}`** to generate Endpoints, SDKs, and CRUD Services.
+3.  **Implement custom domain logic** in manual Service or Action files.
+4.  **Register components** (Roles, Hooks) in `server-init.ts`.
 
-## 2. The Endpoint (STRICTLY GENERATED)
+### 1.3 The Layers
+
+1.  **Endpoint (`src/pages/api/**`)**: [Generated] The HTTP Gateway. Handles Protocol and Security (`ApiGuard`).
+2.  **Action (`src/actions/**`)**: [Manual/Mixed] The Entry Point for logic. Orchestrates context, actor verification, and multiple services.
+3.  **Service (`src/services/**`)**: [Manual/Mixed] The Domain Authority. Handles Database transactions and Hooks.
+
+## 2. Dual Actor Handling (Users vs Agents)
+
+The system supports both human **Users** and autonomous **Agents**.
+
+- **Context**: The `context.locals.actor` provides the identity.
+- **Differentiator**: Check `actor.type === 'user'` or `actor.type === 'agent'` if logic needs to branch (e.g., Agents bypassing certain human-only onboarding checks).
+- **Recommendation**: Services should remain agnostic where possible, relying on the Policy layer (`RolePolicy`) to enforce actor-specific restrictions.
+
+## 3. Module Initialization (`server-init.ts`)
+
+API modules must be self-initializing.
+
+- **Dynamic Registration**: Use `import.meta.glob` to automatically register roles and hooks without manual imports in the core.
+- **Pattern**:
+  ```typescript
+  export const init = async () => {
+    // Scan and register Roles
+    import.meta.glob('./roles/*.ts', { eager: true });
+    // Register module-specific hooks
+    import.meta.glob('./hooks/*.ts', { eager: true });
+  };
+  ```
+
+## 4. The Endpoint (STRICTLY GENERATED)
 
 - **Location**: `src/pages/api/**`
 - **Rule**: Do not modify generated endpoints.
-- **Escape Hatch**: If a custom route is required that `api.yaml` cannot describe, create it in `src/pages/api/custom/` using `defineApi`.
-- **Pattern**: Manual endpoints MUST merge `params`, `query`, and `body` into a `combinedInput` before calling `ApiGuard.protect`.
+- **Escape Hatch**: If a custom route is required, create it in `src/pages/api/custom/` using `defineApi`. Manual endpoints MUST call an **Action** for logic execution.
 
-## 3. The Action (`templates/action.ts`)
+## 5. The Action (`templates/action.ts`)
 
-- **Location**: `src/actions/{kebab-case}-{group}.ts` (e.g., `register-auth.ts`).
-- **Signature**: `public static async run(input: unknown, context: APIContext): Promise<ServiceResponse<R>>`.
-- **Validation**: MUST use a `static schema` to parse the `unknown` input.
-- **Role**: Orchestration of workflows. MUST NOT import `db`.
-- **Types**: Import DTO types from the generated SDK (`../sdk/types`).
+- **Location**: `src/actions/{kebab-case}-{group}.ts`.
+- **Role**: Orchestrator. Validates input, verifies actor context, and calls Services.
+- **Prohibition**: **NEVER** import `db` or other Services' internal models.
 
-## 4. The Service Layer
+## 6. The Service Layer
 
-- **Generated CRUD**: Named `{model}-service.ts` (e.g., `user-service.ts`). Contains standard Prisma operations.
-  - **Hybrid Generation**: The `ServiceBuilder` preserves manual methods. You MAY add custom static methods to this file if tightly coupled, but prefer a separate service for complex logic.
-- **Manual Domain Logic**: Named `{kebab-case}-service.ts` (e.g., `profile-service.ts`).
-- **Standard Signature**: All public methods MUST be `static`, return `Promise<ServiceResponse<T>>`, and **MUST accept `actor: ApiActor`** as a parameter.
-- **Hook-First Logic Flow**:
-  1. **Filter Input**: Use `HookSystem.filter` to allow other modules to modify incoming data.
-  2. **Execute Logic**: Perform the core domain operation (DB access allowed here).
-  3. **Dispatch Side-Effects**: Use `HookSystem.dispatch` to announce the change.
-  4. **Filter Output**: Use `HookSystem.filter` on the result before returning.
+- **Generated CRUD**: Named `{model}-service.ts`.
+- **Manual Domain Logic**: Named `{kebab-case}-service.ts`.
+- **Standard Signature**: `public static async method(actor: ApiActor, input: T): Promise<ServiceResponse<R>>`.
+- **Hook-First Flow**: Filter Input -> DB Operation -> Dispatch Event -> Filter Output.
 
-## 5. Error Handling & Localization
+## 7. Role-Based Access Control (`templates/role.ts`)
 
-- **RULE**: Errors returned in `ServiceResponse` MUST be string keys (translation keys).
-- **Format**: `{module}.service.error.{key}` (e.g., `auth.service.error.invalid_credentials`).
-- **Frontend**: The Shell automatically translates these keys using the i18n system.
+- **Location**: `src/roles/{role-name}.ts`.
+- **Rule**: Implement `RolePolicy`. Throw error on failure.
+- **Declarative Alternative**: Use `access.yaml` for simple role-to-operation mapping.
 
-## 6. Role-Based Access Control (`templates/role.ts`)
+## 8. Aliased Imports
 
-- **Location**: `src/roles/{role-name}.ts` (kebab-case).
-- **Rule**: All role classes **MUST** implement the `RolePolicy` interface.
-- **Signature**: `async check(context: APIContext | AstroGlobal, input: Record<string, unknown>, data?: unknown): Promise<void>`. (Throws if denied).
-- **Actor Access**: Use `const actor = context.locals?.actor;`.
-
-## 7. Aliased Imports
-
-- **REQUIRED**: Use ` @/` for `src/` (Core/Internal).
-- **REQUIRED**: Use ` @modules/` for cross-module imports.
-- **REQUIRED**: Use ` @tests/` for tests.
-- **WHITESPACE RULE**: A **SINGLE SPACE** is mandatory after the opening quote for all internal aliases and workspace packages (e.g., `' @/'`, `' @modules/'`).
+- **MANDATORY**: Use ` @/` for `src/` and ` @modules/` for cross-module.
+- **WHITESPACE RULE**: A **SINGLE SPACE** is mandatory after the opening quote: `' @/'`.

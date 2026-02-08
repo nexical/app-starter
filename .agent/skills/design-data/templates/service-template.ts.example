@@ -1,5 +1,6 @@
 import { db } from ' @/lib/core/db';
 import type { ServiceResponse } from ' @/types/service';
+import type { ApiActor } from ' @/types/api';
 
 /**
  * Manual Service for domain-specific logic.
@@ -10,10 +11,13 @@ import type { ServiceResponse } from ' @/types/service';
 export class {{PascalCaseName}}Service {
   /**
    * Example domain method.
-   * All public methods must be 'public static async' and return ServiceResponse.
+   * All public methods must be 'public static async', accept an 'actor', and return ServiceResponse.
    */
-  public static async executeComplexLogic(id: string): Promise<ServiceResponse<boolean>> {
+  public static async executeComplexLogic(actor: ApiActor, id: string): Promise<ServiceResponse<boolean>> {
     try {
+      // 1. Authorization check (Pragmatic or via RolePolicy)
+      // if (actor.role !== 'ADMIN') throw new Error('Unauthorized');
+
       return await db.$transaction(async (tx) => {
         // Use 'tx' for operations within the transaction
         const record = await tx.{{entityCamelCase}}.findUnique({ where: { id } });

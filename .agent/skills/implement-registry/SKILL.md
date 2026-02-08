@@ -20,41 +20,52 @@ Used for selecting a component (e.g., a Shell) based on a matcher/predicate.
 
 ### C. Directory-Based Registry (Zones)
 Used for automatic discovery of UI components for layout slots (Zones).
-- **Pattern**: Vite glob imports of files in `src/registry/`.
+- **Pattern**: Vite glob imports of files in `src/registry/{zone}/`.
 - **Rule**: Render order is determined by the `{order}-` prefix in the filename (e.g., `10-dashboard.tsx`).
+- **Metadata**: Exporting `order` (number) or `name` (string) will override filename-derived values.
 - **Directive**: Every interactive component MUST include `'use client';` at the top.
 
-## 2. Server-Side Initialization (`server-init.ts`)
+## 2. Manifest-Driven Integration (`ui.yaml`)
 
-Every module MUST have a standardized entry point for registration:
+The `ui.yaml` file is the authoritative manifest for a module's UI contributions. 
 
-- **Path**: `apps/backend/modules/{name}/src/server-init.ts` or `apps/frontend/modules/{name}/src/server-init.ts`.
-- **Standard**: Export an `async function init()`.
-- **Logic**: This function is the ONLY place where registration into class-based or context-aware registries should occur.
-- **Discovery**: Core uses `import.meta.glob` via `glob-helper.ts` to automatically find and execute these files.
+- **Requirement**: Every registry component MUST be documented in the module's `ui.yaml`.
+- **Purpose**: Used by generators for wiring and by `nexical audit ui` for consistency checks.
+- **Path**: `apps/frontend/modules/{name}/ui.yaml`.
 
-## 3. Split Module Pattern
+## 3. Initialization & Lifecycle
 
-To reduce dependency bloat, follow the split naming convention:
-- `*-api`: Core domain logic, models, and CRUD services.
-- `*-ui`: Frontend pages and registry components.
-- `*-email`: React-Email templates and registration.
+### Server-Side Initialization (`server-init.ts`)
+- **API Modules**: `server-init.ts` is **STRICTLY GENERATED**. Do not edit manually. Use the `HookSystem` for custom logic.
+- **UI/Email Modules**: Manual edits are permitted to register into core systems.
+- **Path**: `src/server-init.ts`.
 
-## 4. Implementation Workflow
+### Phased Module Loading
+Modules are loaded in phases defined in `module.config.mjs` (Core, Provider, Feature, Theme). Themes should always load last to ensure their registry contributions can override default behaviors.
+
+## 4. Implementation Standards
+
+### Standard Hooks
+Registry components should interact with the Shell via:
+- `useNavData()`: To access user context and navigation state.
+- `useShellStore()`: To control shell behavior (e.g., `setDetailPanel`, `toggleSidebar`).
+
+### Semantic Styling (Theming)
+To enable theme overrides, registry components MUST:
+- Use kebab-case class names for all key structural elements (e.g., `className="user-menu-trigger"`).
+- Define module-specific styles in `styles.css` using the `@layer components` directive.
+
+## 5. Workflow
 
 1. **For Directory-Based UI**:
+   - Define the contribution in `ui.yaml`.
    - Place component in `src/registry/{zone-name}/`.
    - Use `{order}-{kebab-name}.tsx` naming.
-   - Include `'use client';`.
+   - Include `'use client';` and semantic classes.
 
 2. **For Class/Context Registries**:
-   - Ensure the Registry exists in `core/src/lib/registries/`.
-   - In your module's `src/server-init.ts`, call `Registry.register(...)`.
+   - Register in `src/server-init.ts` (Manual modules only).
+   - Use the `HookSystem` for API-driven logic.
 
-3. **Creating a New Registry**:
-   - Follow the Class-Based Singleton pattern.
-   - Implement LIFO logic if it involves conditional selection.
-   - Use generic interfaces to ensure module compatibility.
-
-## 5. Standard Headers
-- **NEVER** modify `server-init.ts` in API modules if it contains the `// GENERATED CODE` header. Use the `HookSystem` for custom logic instead.
+3. **Metadata Overrides**:
+   - Export `const order = X;` to change priority dynamically.

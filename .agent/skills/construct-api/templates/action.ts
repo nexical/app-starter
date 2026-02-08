@@ -32,15 +32,21 @@ export class __ActionName__Action {
     // 1. Validate Input
     const data = this.schema.parse(input);
 
-    // 2. Authorization Check
+    // 2. Actor Verification
     const actor = context.locals?.actor;
     if (!actor) {
        return { success: false, error: 'core.service.error.unauthorized' };
     }
 
+    // Example: Differentiate behavior for Users vs Agents
+    // if (actor.type === 'agent') {
+    //    // Logic specific to autonomous agents
+    // }
+
     // 3. Orchestration
     // Call Services to perform logic.
     // RULE: NEVER import ' @/lib/core/db' in an Action.
+    // RULE: NEVER import another Service from a Service. Orchestrate here.
     const result = await __ServiceName__.create(actor, data);
 
     // 4. Trigger side effects or cross-module logic (Hooks/other Services)

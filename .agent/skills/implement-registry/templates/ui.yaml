@@ -1,0 +1,17 @@
+# UI Module Manifest
+# This file tracks all registry contributions for the module.
+
+registry:
+  - zone: nav-main
+    component: MyNavItem
+    path: src/registry/nav-main/10-my-item.tsx
+    order: 10
+  - zone: header-end
+    component: UserProfileLink
+    path: src/registry/header-end/20-user-menu.tsx
+    order: 20
+
+# Optional: Custom CSS Layers
+styles:
+  - path: src/styles/module.css
+    layer: components

@@ -9,13 +9,11 @@
 import { defineApi } from ' @/lib/api/api-docs';
 import { ApiGuard } from ' @/lib/api/api-guard';
 import { HookSystem } from ' @/lib/modules/hooks';
-import { __ServiceName__ } from '../../services/__model__-service';
+import { __ActionName__Action } from '../../../actions/__kebab-case__-__group__';
 
 export const POST = defineApi(
   async (context) => {
-    const actor = context.locals.actor;
-
-    // 1. Parse Inputs
+    // 1. Parse Inputs (Merge params, query, and body)
     const body = await context.request.json().catch(() => ({}));
     const query = Object.fromEntries(new URL(context.request.url).searchParams);
     const rawInput = { ...context.params, ...query, ...body };
@@ -27,9 +25,9 @@ export const POST = defineApi(
     // CRITICAL: Merge params, query, and body for the security check
     await ApiGuard.protect(context, '__role__', input);
 
-    // 4. Execution (Service or Action)
-    // RULE: Services MUST accept 'actor' as a parameter.
-    const result = await __ServiceName__.create(actor, input);
+    // 4. Execution (Action-Service-Gateway Split)
+    // RULE: API endpoints MUST call Actions for business logic orchestration.
+    const result = await __ActionName__Action.run(input, context);
 
     // 5. Hook: Filter Output
     const filteredResult = await HookSystem.filter('__module__.__resource__.output', result);

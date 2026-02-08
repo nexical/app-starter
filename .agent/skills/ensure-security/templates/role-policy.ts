@@ -5,18 +5,18 @@ import type { APIContext, AstroGlobal } from 'astro';
  * TEMPLATE: Role Policy
  *
  * Instructions:
- * 1. Rename the class to match your policy (e.g., `TeamEditorPolicy`).
- * 2. Define the input type (e.g., `{ teamId: string }`).
+ * 1. Rename the class to match your policy (e.g., `ProjectMemberPolicy`).
+ * 2. Define the input type. This represents the COMBINED input from body, query, and params.
  * 3. Implement the `check` method. Throw an Error if validation fails.
- * 4. Place this file in `src/roles/`. It will be auto-discovered by the generated `server-init.ts`.
+ * 4. Place this file in `src/roles/`.
  *
  * CRITICAL: Policies MUST NOT import 'db' directly. Use Services to verify access.
  */
 export class __NAME__Policy implements RolePolicy<{ __INPUT_ID__: string }> {
   /**
    * @param context The current API or Page context.
-   * @param input The raw input payload from the request.
-   * @param data Optional: The pre-fetched data from the database (for post-fetch checks).
+   * @param input The combined input payload (body + query + params).
+   * @param data Optional: The pre-fetched data from the database.
    */
   async check(
     context: APIContext | AstroGlobal,
@@ -28,23 +28,21 @@ export class __NAME__Policy implements RolePolicy<{ __INPUT_ID__: string }> {
       throw new Error('User must be authenticated');
     }
 
-    // 1. "Myself" / Ownership Check Pattern (Post-Fetch)
-    // If 'data' is provided, check ownership against the fetched record.
-    if (data && typeof data === 'object') {
-      const record = data as Record<string, unknown>;
-      // Adjust field name (e.g., userId, ownerId) based on your model
-      if (record.userId === actor.id) return;
-    }
-
-    // 2. Input-Based ID Check (Pre-Fetch)
+    // 1. Attribute-Based Check (Using Combined Input)
+    // Check if the actor has rights to the specific resource ID passed in URL or Body
     // if (input.__INPUT_ID__ === actor.id) return;
 
-    // 3. Service-Based Verification
-    // Use a Service to check permissions or data ownership.
-    // const response = await __MODEL__Service.verifyAccess(actor.id, input.__INPUT_ID__);
+    // 2. Post-Fetch Ownership Check
+    // If the API handler already fetched the data, verify ownership here.
+    if (data && typeof data === 'object') {
+      const record = data as Record<string, unknown>;
+      // Example: Ensure actor owns the record
+      if (record.ownerId === actor.id) return;
+    }
 
-    // if (!response.success) {
-    //   throw new Error(response.error?.message || 'Access Denied');
-    // }
+    // 3. Service-Based Verification
+    // Use a Service for complex lookups (e.g., checking team membership).
+    // const response = await TeamService.isMember(actor.id, input.teamId);
+    // if (!response.success) throw new Error('Access Denied');
   }
 }

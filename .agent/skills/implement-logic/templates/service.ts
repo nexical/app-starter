@@ -8,7 +8,7 @@ import type { ApiActor } from '@/lib/api/api-docs';
 /**
  * Service Template (Manual Domain Logic)
  *
- * Naming: {kebab-case}-ops-service.ts
+ * Naming: {kebab-case}-service.ts
  * Location: src/services/
  *
  * Rules:
@@ -18,7 +18,7 @@ import type { ApiActor } from '@/lib/api/api-docs';
  * 4. Implement the "Hook-First" logic flow: Filter -> Execute -> Dispatch -> Filter.
  * 5. Use 'config' helper for environment settings.
  */
-export class __Entity__OpsService {
+export class __Entity__Service {
   /**
    * Example Domain Operation
    */
@@ -35,6 +35,7 @@ export class __Entity__OpsService {
       );
 
       // 2. Fetch & Execute (Transactional)
+      // Services are the only place where direct DB transactions should occur
       const result = await db.$transaction(async (tx) => {
         const record = await tx.__entity__.findUnique({ where: { id: filteredId } });
 
@@ -56,7 +57,7 @@ export class __Entity__OpsService {
 
       return { success: true, data: finalData };
     } catch (error: any) {
-      Logger.error('__Entity__OpsService.processOperation failed', error);
+      Logger.error('__Entity__Service.processOperation failed', error);
       return {
         success: false,
         error: error.message === 'not_found' ? 'service.error.not_found' : 'service.error.generic',
