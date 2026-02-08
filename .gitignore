@@ -39,8 +39,14 @@ apps/frontend/astro.config.mjs
 apps/frontend/tsconfig.json
 apps/frontend/public
 apps/frontend/src
+apps/frontend/locales
+apps/frontend/prisma
+apps/frontend/scripts
 
 apps/backend/astro.config.mjs
 apps/backend/tsconfig.json
 apps/backend/public
 apps/backend/src
+apps/backend/locales
+apps/backend/prisma
+apps/backend/scripts
