@@ -4,12 +4,18 @@
 [submodule "packages/generator"]
 	path = packages/generator
 	url = https://github.com/nexical/generator.git
+[submodule "packages/sdk-core"]
+	path = packages/sdk-core
+	url = https://github.com/nexical/sdk-core.git
 [submodule "packages/agent"]
 	path = packages/agent
 	url = https://github.com/nexical/agent.git
 [submodule "packages/reskill"]
 	path = packages/reskill
 	url = https://github.com/nexical/reskiller.git
+[submodule "packages/cli"]
+	path = packages/cli
+	url = https://github.com/nexical/cli.git
 [submodule "apps/backend/modules/user-api"]
 	path = apps/backend/modules/user-api
 	url = https://github.com/nexical-modules/user-api.git
@@ -22,9 +28,3 @@
 [submodule "apps/frontend/modules/user-ui"]
 	path = apps/frontend/modules/user-ui
 	url = https://github.com/nexical-modules/user-ui.git
-[submodule "packages/cli"]
-	path = packages/cli
-	url = https://github.com/nexical/cli.git
-[submodule "packages/sdk-core"]
-	path = packages/sdk-core
-	url = https://github.com/nexical/sdk-core.git
