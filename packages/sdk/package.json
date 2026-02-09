@@ -1,0 +1,22 @@
+{
+    "name": "@nexical/sdk",
+    "version": "0.1.0",
+    "type": "module",
+    "main": "src/index.ts",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "generate": "tsx scripts/generate.ts",
+        "build": "npm run generate && tsc"
+    },
+    "dependencies": {
+        "@nexical/sdk-core": "*"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.24",
+        "globby": "^14.0.1",
+        "tsx": "^4.7.1",
+        "typescript": "^5.3.3"
+    }
+}

@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "astro": "^5.17.1",
-    "@nexical/agent": "*"
+    "@nexical/sdk": "*"
   }
 }
