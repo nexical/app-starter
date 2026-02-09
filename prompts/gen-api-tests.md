@@ -16,10 +16,10 @@ Generate a complete, executable integration test suite in the `{{ root_path }}te
     {{ read('tests/integration/README.md') }}
     </test_framework_docs>
     <architecture>
-    {{ read('ARCHITECTURE.md') }}
+    {{ read('core/ARCHITECTURE.md') }}
     </architecture>
     <code_standards>
-    {{ read('CODE.md') }}
+    {{ read('core/CODE.md') }}
     </code_standards>
     </standards>
 

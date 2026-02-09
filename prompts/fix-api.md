@@ -8,14 +8,14 @@ Currently, tests may be failing. You will fix the implementation to match the te
 
 1. **The Standards:**
    <standards>
-   <file name="MODULES.md">
-   {{ read('MODULES.md') }}
+   <file name="core/MODULES.md">
+   {{ read('core/MODULES.md') }}
    </file>
-   <file name="ARCHITECTURE.md">
-   {{ read('ARCHITECTURE.md') }}
+   <file name="core/ARCHITECTURE.md">
+   {{ read('core/ARCHITECTURE.md') }}
    </file>
-   <file name="CODE.md">
-   {{ read('CODE.md') }}
+   <file name="core/CODE.md">
+   {{ read('core/CODE.md') }}
    </file>
    </standards>
 

@@ -7,14 +7,14 @@ Perform a comprehensive, recursive analysis of the entire codebase and the exist
 
 1.  **The Constitution (Immutable Standards):**
     <constitution>
-    <file name="ARCHITECTURE.md">
-    {{ read('ARCHITECTURE.md') }}
+    <file name="core/ARCHITECTURE.md">
+    {{ read('core/ARCHITECTURE.md') }}
     </file>
-    <file name="CODE.md">
-    {{ read('CODE.md') }}
+    <file name="core/CODE.md">
+    {{ read('core/CODE.md') }}
     </file>
-    <file name="MODULES.md">
-    {{ read('MODULES.md') }}
+    <file name="core/MODULES.md">
+    {{ read('core/MODULES.md') }}
     </file>
     </constitution>
 
