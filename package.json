@@ -5,7 +5,7 @@
     "workspaces": [
         "core",
         "packages/*",
-        "apps/*"
+        "apps/**/*"
     ],
     "bin": {
         "prompt": "scripts/prompt.ts"
