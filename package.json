@@ -5,15 +5,19 @@
     "workspaces": [
         "core",
         "packages/*",
-        "apps/**/*"
+        "apps/*"
     ],
     "scripts": {
         "build": "npm run build --workspaces",
         "dev:ui": "npm run dev --workspace=@app/frontend",
         "dev:api": "npm run dev --workspace=@app/backend",
-        "docker:db": "docker compose up db",
-        "docker:api": "docker compose up backend",
-        "docker:ui": "docker compose up frontend",
+        "db:up": "docker compose -f compose.db.yml up -d",
+        "db:down": "docker compose -f compose.db.yml down",
+        "db:destroy": "docker compose -f compose.db.yml down --volumes",
+        "app:up": "docker compose up",
+        "app:start": "docker compose up -d",
+        "app:down": "docker compose down --remove-orphans",
+        "app:destroy": "docker compose down --volumes --remove-orphans",
         "test": "npm run test --workspaces"
     },
     "devDependencies": {
