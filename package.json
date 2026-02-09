@@ -7,6 +7,9 @@
         "packages/*",
         "apps/*"
     ],
+    "bin": {
+        "prompt": "scripts/prompt.ts"
+    },
     "scripts": {
         "build": "npm run build --workspaces",
         "dev:ui": "npm run dev --workspace=@app/frontend",
@@ -18,10 +21,15 @@
         "app:start": "docker compose up -d",
         "app:down": "docker compose down --remove-orphans",
         "app:destroy": "docker compose down --volumes --remove-orphans",
-        "test": "npm run test --workspaces"
+        "test": "npm run test --workspaces",
+        "prompt": "npx tsx scripts/prompt.ts"
     },
     "devDependencies": {
+        "@types/minimist": "^1.2.5",
+        "@types/nunjucks": "^3.2.6",
         "tsx": "^4.19.0",
-        "typescript": "^5.5.0"
+        "typescript": "^5.5.0",
+        "minimist": "^1.2.8",
+        "nunjucks": "^3.2.4"
     }
 }
