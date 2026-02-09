@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "type": "module",
     "scripts": {
-        "setup": "npm run setup --workspace=app-core",
-        "build": "npm run build --workspace=app-core",
+        "setup": "npm run setup:db --workspace=app-core && npm run setup:theme --workspace=app-core",
+        "build": "npm run setup && astro build",
         "test": "npm run test --workspace=app-core",
         "dev": "npm run setup && astro dev",
         "preview": "astro preview",
