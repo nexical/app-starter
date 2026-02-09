@@ -25,3 +25,6 @@
 [submodule "packages/cli"]
 	path = packages/cli
 	url = https://github.com/nexical/cli.git
+[submodule "packages/sdk-core"]
+	path = packages/sdk-core
+	url = https://github.com/nexical/sdk-core.git
