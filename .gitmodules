@@ -10,19 +10,18 @@
 [submodule "packages/reskill"]
 	path = packages/reskill
 	url = https://github.com/nexical/reskiller.git
-[submodule "modules/api/user-api"]
+[submodule "apps/backend/modules/user-api"]
 	path = apps/backend/modules/user-api
 	url = https://github.com/nexical-modules/user-api.git
-[submodule "modules/api/user-email"]
+[submodule "apps/backend/modules/user-email"]
 	path = apps/backend/modules/user-email
 	url = https://github.com/nexical-modules/user-email.git
-[submodule "modules/api/orchestrator-api"]
+[submodule "apps/backend/modules/orchestrator-api"]
 	path = apps/backend/modules/orchestrator-api
 	url = https://github.com/nexical-modules/orchestrator-api.git
-[submodule "modules/ui/user-ui"]
+[submodule "apps/frontend/modules/user-ui"]
 	path = apps/frontend/modules/user-ui
 	url = https://github.com/nexical-modules/user-ui.git
 [submodule "packages/cli"]
 	path = packages/cli
 	url = https://github.com/nexical/cli.git
-
