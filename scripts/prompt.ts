@@ -13,7 +13,10 @@ import readline from 'node:readline';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PROMPTS_DIR = path.join(__dirname, '../prompts');
+const PROMPTS_DIRS = [
+  path.join(__dirname, '../prompts'),
+  path.join(__dirname, '../packages/generator/prompts/agents'),
+];
 
 // Helper to run Gemini with a specific model
 // Returns 0 on success, or throws error if failed (unless it's a 429)
@@ -97,29 +100,83 @@ Arguments:
 
 Options:
   --help, -h    Show this help message.
+  --module, -m  Target a specific module (searches apps/frontend/modules and apps/backend/modules).
   ...flags      Any other flags are passed as variables to the template.
 
 Examples:
   npx prompt auditor --target=src/foo.ts
+  npx prompt spec-writer --module=user-profile
 `);
     process.exit(0);
   }
 
-  // Resolve prompt file
-  const promptFile = path.join(
-    PROMPTS_DIR,
-    promptName.endsWith('.md') ? promptName : `${promptName}.md`,
-  );
+  // Resolve prompt file from multiple directories
+  let promptFile: string | undefined;
+  const promptFileName = promptName.endsWith('.md') ? promptName : `${promptName}.md`;
 
-  try {
-    await fs.access(promptFile);
-  } catch (error) {
-    console.error(`Error: Prompt file not found: ${promptFile}`);
+  for (const dir of PROMPTS_DIRS) {
+    const candidate = path.join(dir, promptFileName);
+    try {
+      await fs.access(candidate);
+      promptFile = candidate;
+      break;
+    } catch {
+      // Continue searching
+    }
+  }
+
+  if (!promptFile) {
+    console.error(`Error: Prompt file '${promptFileName}' not found in any of the search directories:`);
+    PROMPTS_DIRS.forEach(d => console.error(`  - ${d}`));
     process.exit(1);
   }
 
+  // Module Resolution Logic
+  let contextVars = { ...argv };
+  if (argv.module || argv.m) {
+    const moduleName = argv.module || argv.m;
+    const projectRoot = path.resolve(__dirname, '..');
+    const frontendPath = path.join(projectRoot, 'apps/frontend/modules', moduleName);
+    const backendPath = path.join(projectRoot, 'apps/backend/modules', moduleName);
+
+    let moduleRoot: string | undefined;
+    let moduleType: 'frontend' | 'backend' | undefined;
+
+    // Check frontend
+    try {
+      await fs.access(frontendPath);
+      moduleRoot = frontendPath;
+      moduleType = 'frontend';
+    } catch { }
+
+    // Check backend
+    if (!moduleRoot) {
+      try {
+        await fs.access(backendPath);
+        moduleRoot = backendPath;
+        moduleType = 'backend';
+      } catch { }
+    }
+
+    if (!moduleRoot) {
+      console.error(`Error: Module '${moduleName}' not found in apps/frontend/modules or apps/backend/modules.`);
+      process.exit(1);
+    }
+
+    console.log(`[Context] Targeting ${moduleType} module: ${moduleName}`);
+    contextVars.module_root = moduleRoot;
+    contextVars.module_name = moduleName;
+    contextVars.module_type = moduleType;
+    contextVars.root_path = moduleRoot + '/'; // trailing slash for convenience
+  } else {
+    // Default root_path if not specified (legacy behavior or generic usage)
+    if (!contextVars.root_path) {
+      contextVars.root_path = process.cwd() + '/';
+    }
+  }
+
   // Configure Nunjucks
-  const env = new nunjucks.Environment(new nunjucks.FileSystemLoader(PROMPTS_DIR), {
+  const env = new nunjucks.Environment(new nunjucks.FileSystemLoader(PROMPTS_DIRS), {
     autoescape: false,
     trimBlocks: true,
     lstripBlocks: true,
@@ -143,12 +200,18 @@ Examples:
   // Helper: read(path) -> reads local file
   env.addGlobal('read', (relativePath: string) => {
     try {
-      const resolvedPath = path.resolve(process.cwd(), relativePath);
+      // If path is absolute, use it directly. Otherwise resolve from CWD (or maybe project root?)
+      // For legacy compatibility, we keep resolving from CWD for now, but explicit paths are better.
+      const resolvedPath = path.isAbsolute(relativePath)
+        ? relativePath
+        : path.resolve(process.cwd(), relativePath);
+
       const content = readFileSync(resolvedPath, 'utf-8');
       return content;
     } catch (error) {
-      console.error(`[Read] Error reading file: ${relativePath}`);
-      return `[Error reading file ${relativePath}]`;
+      // Silent fail or warning? Let's warn to be helpful.
+      console.warn(`[Read] Warning: Could not read file: ${relativePath}`);
+      return ``; // Return empty string so prompts don't crash, or maybe a placeholder.
     }
   });
 
@@ -162,9 +225,9 @@ Examples:
   }
 
   // Render template
-  console.log(`[Render] Rendering template with variables:`, JSON.stringify(argv, null, 2));
+  console.log(`[Render] Rendering template with variables:`, JSON.stringify(contextVars, null, 2));
   const renderedPrompt = env.renderString(templateContent, {
-    ...argv,
+    ...contextVars,
   });
 
   // Buffer to file
