@@ -1,0 +1,33 @@
+{
+    "skillsDir": "skills",
+    "constitution": {
+        "architecture": "core/ARCHITECTURE.md",
+        "patterns": "core/MODULES.md"
+    },
+    "input": {
+        "platformDirs": [
+            {
+                "name": "core",
+                "path": "core/src"
+            },
+            {
+                "name": "generator",
+                "path": "packages/generator/src"
+            }
+        ],
+        "moduleDirs": [
+            "apps/backend/modules",
+            "apps/frontend/modules"
+        ]
+    },
+    "outputs": {
+        "contextFiles": [
+            "GEMINI.md",
+            ".cursorrules"
+        ],
+        "symlinks": [
+            ".vscode/skills",
+            ".cursor/rules"
+        ]
+    }
+}
