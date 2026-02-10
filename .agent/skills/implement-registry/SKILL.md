@@ -2,6 +2,11 @@
 
 This skill governs the implementation and extension of the **Registry System** within the Nexical Ecosystem. Registries are the primary mechanism for decoupling the Shell from individual Modules.
 
+## Strict Quality Standards
+
+- **Zero Tolerance for `any`**: The use of `any` is strictly prohibited. You MUST use specific types, `unknown` with validation, or proper interfaces. There are NO exceptions to this rule.
+- **ESLint Compliance**: All code you generate must be strictly compliant with the project's ESLint rules. Always proactively check for and resolve any linting errors provided in tool feedback.
+
 ## 1. Registry Types
 
 The Nexical Ecosystem uses three distinct registry patterns:

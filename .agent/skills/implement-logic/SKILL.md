@@ -14,6 +14,11 @@ You **MUST** follow the standards defined in:
 - `core/CODE.md`: Strict Types, Zod Validation, Error Handling.
 - **Core Neutrality**: The core platform must never know what modules are installed on the system.
 
+## Strict Quality Standards
+
+- **Zero Tolerance for `any`**: The use of `any` is strictly prohibited. You MUST use specific types, `unknown` with validation, or proper interfaces. There are NO exceptions to this rule.
+- **ESLint Compliance**: All code you generate must be strictly compliant with the project's ESLint rules. Always proactively check for and resolve any linting errors provided in tool feedback.
+
 ## 1. Universal Database Access
 
 While Services remain the primary "System of Record" for shared business logic, the Nexical Ecosystem permits **Universal Database Access**.

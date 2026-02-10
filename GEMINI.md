@@ -62,7 +62,8 @@ You must adhere to the hygiene rules in `core/CODE.md`.
 
 ### Imports & hygiene
 
-- **FORBIDDEN**: `any` type. Use `unknown` + Zod validation.
+- **FORBIDDEN**: **Strict Zero-Tolerance for the `any` type.** You MUST use specific interfaces, `unknown` with Zod validation, or proper generics. The use of `any` is a critical failure.
+- **MANDATORY**: **ESLint Compliance.** All generated code MUST strictly adhere to the project's ESLint rules. You MUST proactively monitor tool feedback for linting errors and resolve them immediately.
 - **FORBIDDEN**: Dynamic imports (`import(...)`). Use static named imports at the top of the file.
 - **REQUIRED**: Named Imports (Aliases).
   - Use `@/` for `src/`.
