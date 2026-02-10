@@ -30,6 +30,7 @@ You **MUST** follow the standards defined in:
   - **RULE**: If logic requires multiple services, it MUST be orchestrated by an **Action**.
 - **MANDATORY VALIDATION**: All manual Actions MUST define a `static schema` (Zod) and call `this.schema.parse(input)` as the first line of the `run` method.
 - **NO LOGIC IN ENDPOINTS**: Endpoints (`src/pages/api`) must **NEVER** contain business logic. They only Validate, Guard, and Call (Action).
+- **CENTRALIZED SDK**: Always import types and methods from `@/lib/api`. Use `UserModuleTypes` (or similar) for DTOs and models.
 
 ## 1. The API Architecture (YAML-First)
 

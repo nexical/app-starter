@@ -45,6 +45,7 @@ Actions are single-purpose gateways triggered by API endpoints. They handle acto
 - **Logic Policy**: **Gateways, not Engines**. Actions MUST NOT contain complex business logic or direct Prisma calls. They delegate to a `Service`.
 - **Authorization**: Use `ApiGuard.protect` or `RolePolicy` classes to enforce security. Manual actor checks should be minimized in favor of policy-driven enforcement.
 - **I18n**: Subject lines and user-facing strings MUST be fetched using `getTranslation()`.
+- **CentralIZED SDK**: All SDK access (methods, types) MUST be via `@/lib/api`. Use `*ModuleTypes` for types.
 
 ## 4. Role-Based Policy Enforcement
 

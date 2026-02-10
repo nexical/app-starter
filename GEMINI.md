@@ -52,7 +52,7 @@ You must enforce the **Strict Separation of Concerns** as defined in `core/ARCHI
   2.  **Define Custom Operations** in `apps/backend/modules/{name}/api.yaml` for logic that falls outside standard CRUD.
   3.  **Generate** the SDK and API handlers using `nexical gen api {name}`.
   4.  Implement custom domain logic in manual `src/services/` or `src/actions/` files.
-  5.  Consume via global `api` client.
+  5.  **Centralized SDK Mandate**: All SDK access (methods and types) MUST be routed through the centralized `api` object and `*ModuleTypes` namespaces in `@/lib/api`. Direct imports from module SDKs (e.g., `@modules/{name}/src/sdk`) are **FORBIDDEN**.
 
 ---
 

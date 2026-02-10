@@ -15,6 +15,7 @@ You **MUST** follow the standards defined in:
 - **Core Neutrality**: The core platform must never know what modules are installed on the system. If the core needs to know information about modules it should implement module loaders or registries.
 - **Permissions**: Always use `Permission.check()` from the corresponding API module to verify access before rendering sensitive UI components or performing actions.
 - **Internationalization**: NEVER hardcode user-facing strings. Use the `useTranslation` hook and module-prefixed keys.
+- **Centralized SDK**: ALWAYS use the `api` object and `*ModuleTypes` from `@/lib/api`. Direct imports from module SDKs are forbidden.
 - **Mandatory Configuration**: Every UI module MUST have a `ui.yaml` file in its root directory defining its routing, shells, and registry metadata.
 
 ## 1. Core Hooks
