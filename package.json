@@ -11,7 +11,7 @@
         "prompt": "scripts/prompt.ts"
     },
     "scripts": {
-        "build": "npm run build --workspaces",
+        "build": "npm run build --workspace=app-core --workspace=@app/frontend --workspace=@app/backend --workspace=@nexical/agent --workspace=@nexical/cli --workspace=@nexical/generator --workspace=@nexical/reskill --workspace=@nexical/sdk",
         "dev:ui": "npm run dev --workspace=@app/frontend",
         "dev:api": "npm run dev --workspace=@app/backend",
         "db:up": "docker compose -f compose.db.yml up -d",
@@ -21,7 +21,10 @@
         "app:start": "docker compose up -d",
         "app:down": "docker compose down --remove-orphans",
         "app:destroy": "docker compose down --volumes --remove-orphans",
-        "test": "npm run test --workspaces",
+        "test:unit": "npm run test:unit --workspace=app-core --workspace=@app/frontend --workspace=@app/backend --workspace=@nexical/cli --workspace=@nexical/generator --workspace=@nexical/reskill",
+        "test:integration": "npm run test:integration --workspace=app-core --workspace=@app/backend --workspace=@nexical/cli --workspace=@nexical/reskill",
+        "test:e2e": "npm run test:e2e --workspace=app-core --workspace=@app/frontend --workspace=@nexical/cli",
+        "test": "npm run test --workspace=app-core --workspace=@app/frontend --workspace=@app/backend --workspace=@nexical/agent --workspace=@nexical/cli --workspace=@nexical/reskill",
         "prompt": "npx tsx scripts/prompt.ts"
     },
     "devDependencies": {
