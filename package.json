@@ -11,7 +11,7 @@
         "prompt": "scripts/prompt.ts"
     },
     "scripts": {
-        "build": "npm run build --workspace=app-core --workspace=@app/frontend --workspace=@app/backend --workspace=@nexical/agent --workspace=@nexical/cli --workspace=@nexical/generator --workspace=@nexical/reskill --workspace=@nexical/sdk",
+        "build": "npm run build --workspace=@app/frontend --workspace=@app/backend --workspace=@nexical/agent --workspace=@nexical/cli --workspace=@nexical/generator --workspace=@nexical/reskill --workspace=@nexical/sdk",
         "dev:ui": "npm run dev --workspace=@app/frontend",
         "dev:api": "npm run dev --workspace=@app/backend",
         "db:up": "docker compose -f compose.db.yml up -d",
