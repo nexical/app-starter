@@ -5,7 +5,9 @@
     "scripts": {
         "setup": "npm run setup:db --workspace=app-core && npm run setup:theme --workspace=app-core",
         "build": "npm run setup && astro build",
-        "test": "npm run test --workspace=app-core",
+        "test": "npm run test:unit && npm run test:integration",
+        "test:unit": "npx vitest run -c vitest.unit.config.ts",
+        "test:integration": "npx vitest run -c vitest.integration.config.ts",
         "dev": "npm run setup && astro dev",
         "preview": "astro preview",
         "db:push": "npm run db:push --workspace=app-core",
@@ -15,7 +17,9 @@
         "db:validate": "npm run db:validate --workspace=app-core"
     },
     "devDependencies": {
-        "app-core": "*"
+        "app-core": "*",
+        "vitest": "^4.0.16",
+        "@vitest/coverage-v8": "^4.0.18"
     },
     "dependencies": {
         "@nexical/agent": "*",

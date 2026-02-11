@@ -5,12 +5,16 @@
   "scripts": {
     "setup": "npm run setup:theme --workspace=app-core",
     "build": "npm run setup && astro build",
-    "test": "npm run test --workspace=app-core",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "npx vitest run -c vitest.unit.config.ts",
+    "test:e2e": "npx playwright test",
     "dev": "npm run setup && astro dev",
     "preview": "astro preview"
   },
   "devDependencies": {
-    "app-core": "*"
+    "app-core": "*",
+    "vitest": "^4.0.16",
+    "@playwright/test": "^1.58.1"
   },
   "dependencies": {
     "astro": "^5.17.1",
