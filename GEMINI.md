@@ -62,7 +62,11 @@ You must adhere to the hygiene rules in `core/CODE.md`.
 
 ### Imports & hygiene
 
-- **FORBIDDEN**: **Strict Zero-Tolerance for the `any` type.** You MUST use specific interfaces, `unknown` with Zod validation, or proper generics. The use of `any` is a critical failure.
+- **PROHIBITION**: **Total Zero-Tolerance for the `any` type.** The `any` type is toxic sewage that destroys type safety, wastes tokens, and causes subtle bugs. It is **STRICTLY FORBIDDEN** under all circumstances.
+  - You MUST use specific interfaces, concrete types, or properly constrained generics.
+  - If multiple types are supported, you MUST list them as a union (e.g., `TypeA | TypeB`).
+  - You MAY use `unknown` ONLY if it is mathematically necessary as a top type and there is absolutely no other way to satisfy the compiler while maintaining safety.
+  - Using `any` is a critical system failure. Real types are MANDATORY.
 - **MANDATORY**: **ESLint Compliance.** All generated code MUST strictly adhere to the project's ESLint rules. You MUST proactively monitor tool feedback for linting errors and resolve them immediately.
 - **FORBIDDEN**: Dynamic imports (`import(...)`). Use static named imports at the top of the file.
 - **REQUIRED**: Named Imports (Aliases).
