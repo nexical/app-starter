@@ -17,11 +17,12 @@
         "db:validate": "npm run db:validate --workspace=app-core"
     },
     "devDependencies": {
+        "@vitest/coverage-v8": "^4.0.18",
         "app-core": "*",
-        "vitest": "^4.0.16",
-        "@vitest/coverage-v8": "^4.0.18"
+        "vitest": "^4.0.16"
     },
     "dependencies": {
+        "@astrojs/node": "^9.5.3",
         "@nexical/agent": "*",
         "astro": "^5.17.1"
     }

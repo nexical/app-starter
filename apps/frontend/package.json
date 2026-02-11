@@ -12,12 +12,16 @@
     "preview": "astro preview"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.1",
     "app-core": "*",
-    "vitest": "^4.0.16",
-    "@playwright/test": "^1.58.1"
+    "vitest": "^4.0.16"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/react": "^4.4.2",
+    "@nexical/sdk": "*",
+    "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.1",
-    "@nexical/sdk": "*"
+    "defu": "^6.1.4"
   }
 }
