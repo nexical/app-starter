@@ -12,7 +12,8 @@
                 "core/src/*"
             ],
             "@modules/*": [
-                "modules/*"
+                "apps/backend/modules/*",
+                "apps/frontend/modules/*"
             ],
             "@packages/*": [
                 "packages/*"

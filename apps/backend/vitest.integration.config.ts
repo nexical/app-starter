@@ -14,7 +14,10 @@ export default defineConfig({
         fileParallelism: false,
         environment: 'node',
         globals: true,
-        setupFiles: [path.resolve(coreDir, './tests/integration/setup.ts')],
+        setupFiles: [
+            path.resolve(coreDir, './tests/integration/env-setup.ts'),
+            path.resolve(coreDir, './tests/integration/setup.ts'),
+        ],
         include: [
             'modules/**/tests/integration/**/*.test.{ts,tsx}',
         ],
