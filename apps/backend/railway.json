@@ -1,0 +1,12 @@
+{
+    "$schema": "https://railway.app/railway.schema.json",
+    "build": {
+        "builder": "NIXPACKS",
+        "buildCommand": "npm run build --workspace=@app/backend"
+    },
+    "deploy": {
+        "startCommand": "node apps/backend/dist/server/entry.mjs",
+        "healthcheckPath": "/health",
+        "restartPolicyType": "ON_FAILURE"
+    }
+}
