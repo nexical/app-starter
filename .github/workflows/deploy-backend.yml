@@ -1,31 +1,30 @@
-name: Deploy Backend to Railway
-
+name: Deploy Backend to railway
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
+  workflow_dispatch: {}
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-
+          cache: npm
       - name: Install Dependencies
         run: npm ci
-
-      - name: Install Railway CLI
+      - name: Install railway CLI
         run: npm install -g @railway/cli
-
-      - name: Deploy to Railway
+      - name: Deploy to railway
         run: railway up --service ${{ vars.RAILWAY_SERVICE_NAME }} --detach
         working-directory: apps/backend
         env:

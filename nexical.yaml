@@ -1,0 +1,14 @@
+deploy:
+  backend:
+    provider: railway
+    projectName: nexical-backend
+    options:
+      tokenEnvVar: RAILWAY_TOKEN
+  frontend:
+    provider: cloudflare
+    projectName: nexical-frontend
+    options:
+      apiTokenEnvVar: CLOUDFLARE_API_TOKEN
+      accountIdEnvVar: CLOUDFLARE_ACCOUNT_ID
+  repository:
+    provider: github

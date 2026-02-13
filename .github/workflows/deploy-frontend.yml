@@ -1,11 +1,9 @@
-name: Deploy Frontend to Cloudflare Pages
-
+name: Deploy Frontend to cloudflare
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
+  workflow_dispatch: {}
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -17,19 +15,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-
+          cache: npm
       - name: Install Dependencies
         run: npm ci
-
       - name: Build Frontend
         run: npm run build --workspace=@app/frontend
-
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
