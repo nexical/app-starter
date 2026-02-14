@@ -8,7 +8,7 @@
     },
     "scripts": {
         "generate": "tsx scripts/generate.ts",
-        "build": "npm run generate && tsc"
+        "build": "npm run generate && npx tsc"
     },
     "dependencies": {
         "@nexical/sdk-core": "*"
@@ -17,6 +17,6 @@
         "@types/node": "^20.11.24",
         "globby": "^14.0.1",
         "tsx": "^4.7.1",
-        "typescript": "^5.3.3"
+        "typescript": "^5.9.3"
     }
 }
