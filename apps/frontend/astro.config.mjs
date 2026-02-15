@@ -5,5 +5,8 @@ import baseConfig from '../../core/astro.config.mjs';
 
 export default defineConfig(defu({
     output: 'static',
-    adapter: cloudflare(),
+    adapter: cloudflare({
+        imageService: 'compile',
+        platformProxy: { enabled: true },
+    }),
 }, baseConfig));
