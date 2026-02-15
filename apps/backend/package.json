@@ -3,7 +3,8 @@
     "version": "0.1.0",
     "type": "module",
     "scripts": {
-        "setup": "npm run setup:db --workspace=app-core && npm run setup:theme --workspace=app-core",
+        "generate:version": "npx tsx ../../scripts/generate-version.ts",
+        "setup": "npm run generate:version && npm run setup:db --workspace=app-core && npm run setup:theme --workspace=app-core",
         "build": "npm run setup && astro build",
         "test": "npm run test:unit && npm run test:integration",
         "test:unit": "npx vitest run -c vitest.unit.config.ts",
