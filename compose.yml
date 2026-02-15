@@ -62,3 +62,6 @@ services:
       interval: 6s
       timeout: 6s
       retries: 30
+
+volumes:
+  pgdata:
